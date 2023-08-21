@@ -3,7 +3,7 @@ import './App.css'
 import Home from './pages/Home'
 import LoginPage from './pages/LoginPage';
 import ProductDetailPage from './pages/ProductDetialPage'
-
+import Protected from './features/products/components/Protected';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -15,7 +15,7 @@ import CheckoutPage from './pages/CheckoutPage';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Protected><Home /> </Protected>,
   },
   {
     path: "/login",
@@ -27,11 +27,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/checkout",
-    element: <CheckoutPage />,
+    element: <Protected><CheckoutPage /></Protected>,
   },
   {
     path: "/product-details/:id",
-    element: <ProductDetailPage />,
+    element: <Protected><ProductDetailPage /></Protected>,
   },
 
 ]);

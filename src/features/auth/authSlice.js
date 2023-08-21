@@ -1,22 +1,29 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchCount } from './counterAPI';
+import { checkUser, createUser } from './autAPI';
 
 const initialState = {
-  value: 0,
+  isLoggedInUser: null,
+  error: null,
   status: 'idle',
 };
 
-export const incrementAsync = createAsyncThunk(
-  'counter/fetchCount',
-  async (amount) => {
-    const response = await fetchCount(amount);
-
-    return response.data;
+export const createUserAsync = createAsyncThunk(
+  'user/createUser',
+  async (userData) => {
+    const response = await createUser(userData);
+    return response;
+  }
+);
+export const checkUserAsync = createAsyncThunk(
+  'user/checkUser',
+  async (loginInfo) => {
+    const response = await checkUser(loginInfo);
+    return response;
   }
 );
 
 export const counterSlice = createSlice({
-  name: 'counter',
+  name: 'auth',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -26,25 +33,31 @@ export const counterSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(incrementAsync.pending, (state) => {
+      .addCase(createUserAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(incrementAsync.fulfilled, (state, action) => {
+      .addCase(createUserAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.value += action.payload;
+        state.user = action.payload;
+      })
+      .addCase(checkUserAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(checkUserAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.isLoggedInUser = action.payload;
+      })
+      .addCase(checkUserAsync.rejected, (state, action) => {
+        state.status = 'idle';
+        state.error = action.error;
       });
   },
 });
 
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { increment } = counterSlice.actions;
 
-export const selectCount = (state) => state.counter.value;
+export const selectisLoggedInUser = (state) => state.auth.isLoggedInUser;
+export const selectError = (state) => state.auth.error;
 
-export const incrementIfOdd = (amount) => (dispatch, getState) => {
-  const currentValue = selectCount(getState());
-  if (currentValue % 2 === 1) {
-    dispatch(incrementByAmount(amount));
-  }
-};
 
 export default counterSlice.reducer;
