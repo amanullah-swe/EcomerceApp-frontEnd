@@ -53,6 +53,14 @@ export const productsSlice = createSlice({
     increment: (state) => {
       state.value += 1;
     },
+    updateBrands: (state, action) => {
+      let name;
+      if (action.payload.name === "brand") name = "brands";
+      else name = "categories";
+      state[name][action.payload.index] = {
+        ...action.payload.option
+      }
+    }
   },
 
   extraReducers: (builder) => {
@@ -96,7 +104,7 @@ export const productsSlice = createSlice({
   },
 });
 
-export const { increment, } = productsSlice.actions;
+export const { increment, updateBrands } = productsSlice.actions;
 export const selectAllProducts = (state) => state.products.products;
 export const selectSelectedProduct = (state) => state.products.selectedProduct;
 export const selectAllBrands = (state) => state.products.brands;

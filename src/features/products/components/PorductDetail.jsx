@@ -25,6 +25,8 @@ import { RadioGroup } from '@headlessui/react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProductByIdAsync, selectSelectedProduct } from '../productListslice'
+import { createCartItemAsync } from '../../cart/cartSlice'
+import { selectisLoggedInUser } from '../../auth/authSlice'
 
 const colors = [
     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -94,10 +96,19 @@ export default function ProductDetial() {
     const dispatch = useDispatch();
     const { id } = useParams();
     const product = useSelector(selectSelectedProduct);
+    const user = useSelector(selectisLoggedInUser);
+
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        delete product[id];
+        dispatch(createCartItemAsync({ ...product, quantity: 1, user: user.id }));
+    }
+
 
     useEffect(() => {
         dispatch(fetchProductByIdAsync(id));
-    }, [dispatch, id])
+    }, [dispatch, id]);
 
     return (
         <>{product &&
@@ -300,10 +311,11 @@ export default function ProductDetial() {
                                 </div>
 
                                 <button
+                                    onClick={handleAddToCart}
                                     type="submit"
                                     className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                 >
-                                    Add to bag
+                                    Add to cart
                                 </button>
                             </form>
                         </div>

@@ -7,7 +7,8 @@ import {
   selectAllBrands,
   selectAllCategories,
   fetchAllBrandsAsync,
-  fetchAllCategotiesAsync
+  fetchAllCategotiesAsync,
+  updateBrands
 } from '../productListslice';
 
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
@@ -16,7 +17,6 @@ import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom';
-import { fetchAllBrands } from '../projuctListApi';
 const ITEM_PER_PAGE = 10;
 
 const sortOptions = [
@@ -42,6 +42,19 @@ export default function ProductList() {
   const brands = useSelector(selectAllBrands);
   const categories = useSelector(selectAllCategories);
 
+  const filters = [
+    {
+      id: 'brand',
+      name: 'Brand',
+      options: brands
+    },
+    {
+      id: 'category',
+      name: 'Category',
+      options: categories
+    },
+  ]
+
   const [filter, setFilter] = useState({
     category: [],
     brand: []
@@ -50,20 +63,23 @@ export default function ProductList() {
   const [page, setPage] = useState(1);
 
 
-  const handleFilter = (e) => {
-
-    e.stopPropagation()
+  const handleFilter = (e, index, option) => {
+    e.stopPropagation();
+    const { name, value } = e.target;
     let newFilter = {
       ...filter
     }
     if (e.target.checked) {
-      const { name, value } = e.target;
       if (newFilter[name]) {
         newFilter[name].push(value);
       } else {
         newFilter[name] = [value];
       }
-
+      option = {
+        ...option,
+        checked: true
+      }
+      dispatch(updateBrands({ name, value, option, index }));
     } else
       if (newFilter[e.target.name]) {
         newFilter = {
@@ -74,6 +90,7 @@ export default function ProductList() {
       else {
         return;
       }
+    dispatch(updateBrands({ name, value, option, index }));
     setFilter(newFilter);
   }
 
@@ -106,18 +123,6 @@ export default function ProductList() {
     dispatch(fetchAllBrandsAsync());
     dispatch(fetchAllCategotiesAsync());
   }, [dispatch]);
-  const filters = [
-    {
-      id: 'brand',
-      name: 'Brand',
-      options: brands
-    },
-    {
-      id: 'category',
-      name: 'Category',
-      options: categories
-    },
-  ]
 
   return (
     <div>
@@ -308,7 +313,7 @@ function DesktopFilters({ handleFilter, filters }) {
                         defaultValue={option.value}
                         type="checkbox"
                         defaultChecked={option.checked}
-                        onChange={(e) => handleFilter(e, option)}
+                        onChange={(e) => handleFilter(e, optionIdx, option)}
                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                       />
                       <label
@@ -401,7 +406,7 @@ function MobileFilter({ handleFilter, setMobileFiltersOpen, mobileFiltersOpen, f
                                   defaultValue={option.value}
                                   type="checkbox"
                                   defaultChecked={option.checked}
-                                  onChange={handleFilter}
+                                  onChange={(e) => { handleFilter(e, optionIdx, option) }}
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <label
