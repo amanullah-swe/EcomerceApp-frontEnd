@@ -44,3 +44,14 @@ export function deleteCartItemById(itemId) {
   }
   );
 }
+
+export function deleteCartAllItems(userId) {
+  return new Promise(async (resolve) => {
+    const items = await fetchCartItemsByUserId(userId);
+    for (const item of items) {
+      await deleteCartItemById(item.id);
+    }
+    resolve({ status: 'item delete succesfully' });
+  }
+  );
+}

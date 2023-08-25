@@ -26,7 +26,7 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProductByIdAsync, selectSelectedProduct } from '../productListslice'
 import { createCartItemAsync } from '../../cart/cartSlice'
-import { selectisLoggedInUser } from '../../auth/authSlice'
+import { selectUserInfo } from '../../user/userSlice'
 
 const colors = [
     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -96,13 +96,14 @@ export default function ProductDetial() {
     const dispatch = useDispatch();
     const { id } = useParams();
     const product = useSelector(selectSelectedProduct);
-    const user = useSelector(selectisLoggedInUser);
+    const user = useSelector(selectUserInfo);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        delete product[id];
-        dispatch(createCartItemAsync({ ...product, quantity: 1, user: user.id }));
+        const newItem = { ...product, quantity: 1, user: user.id }
+        delete newItem["id"];
+        dispatch(createCartItemAsync(newItem));
     }
 
 

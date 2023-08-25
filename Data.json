@@ -2339,51 +2339,631 @@
       "name": "amanullah",
       "email": "sarfarazaman38@gmail.com",
       "password": "12345678",
-      "id": 1
-    }
-  ],
-  "cart": [
-    {
       "id": 1,
-      "title": "iPhone 9",
-      "description": "An apple mobile which is nothing like apple",
-      "price": 549,
-      "discountPercentage": 12.96,
-      "rating": 4.69,
-      "stock": 94,
-      "brand": "Apple",
-      "category": "smartphones",
-      "thumbnail": "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/1/1.jpg",
-        "https://i.dummyjson.com/data/products/1/2.jpg",
-        "https://i.dummyjson.com/data/products/1/3.jpg",
-        "https://i.dummyjson.com/data/products/1/4.jpg",
-        "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
-      ],
-      "quantity": 5,
-      "user": 1
+      "addresses": [
+        {
+          "email": "sarfaramamasan38@gmail.com",
+          "firstName": "amanullah",
+          "lastName": "shaikh",
+          "pinCode": 431001,
+          "country": "India",
+          "streetAddress": "aurangabad, sillod",
+          "city": "aurangabad",
+          "region": "maharashtra",
+          "phone": "0767837923"
+        },
+        {
+          "email": "amaan.swe@gmail.com",
+          "firstName": "amanullah",
+          "lastName": "shaikh",
+          "pinCode": 431001,
+          "country": "India",
+          "streetAddress": "aurangabad, sillod",
+          "city": "aurangabad",
+          "region": "maharashtra",
+          "phone": "0767837787"
+        }
+      ]
     },
     {
-      "id": 4,
-      "title": "OPPOF19",
-      "description": "OPPO F19 is officially announced on April 2021.",
-      "price": 280,
-      "discountPercentage": 17.91,
-      "rating": 4.3,
-      "stock": 123,
-      "brand": "OPPO",
-      "category": "smartphones",
-      "thumbnail": "https://i.dummyjson.com/data/products/4/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/4/1.jpg",
-        "https://i.dummyjson.com/data/products/4/2.jpg",
-        "https://i.dummyjson.com/data/products/4/3.jpg",
-        "https://i.dummyjson.com/data/products/4/4.jpg",
-        "https://i.dummyjson.com/data/products/4/thumbnail.jpg"
+      "name": "amanullah",
+      "email": "esmamanyt@gmail.com",
+      "password": "12345678",
+      "addresses": [
+        {
+          "email": "esmamanyt@gmail.com",
+          "firstName": "amanullah",
+          "lastName": "shaikh",
+          "pinCode": 431001,
+          "country": "India",
+          "streetAddress": "aurangabad, sillod",
+          "city": "aurangabad",
+          "region": "maharashtra",
+          "phone": "1234567890"
+        },
+        {
+          "email": "amaan.swe@gmail.com",
+          "firstName": "amanullah",
+          "lastName": "shaikh",
+          "pinCode": 431001,
+          "country": "India",
+          "streetAddress": "aurangabad, sillod",
+          "city": "aurangabad",
+          "region": "maharashtra",
+          "phone": "0876783792"
+        }
       ],
-      "quantity": 5,
-      "user": 1
+      "id": 2
+    }
+  ],
+  "cart": [],
+  "orders": [
+    {
+      "items": [
+        {
+          "title": "Samsung Universe 9",
+          "description": "Samsung's new variant which goes beyond Galaxy to the Universe",
+          "price": 1249,
+          "discountPercentage": 15.46,
+          "rating": 4.09,
+          "stock": 36,
+          "brand": "Samsung",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/3/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/3/1.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 1
+        },
+        {
+          "title": "Infinix INBOOK",
+          "description": "Infinix Inbook X1 Ci3 10th 8GB 256GB 14 Win10 Grey – 1 Year Warranty",
+          "price": 1099,
+          "discountPercentage": 11.83,
+          "rating": 4.54,
+          "stock": 96,
+          "brand": "Infinix",
+          "category": "laptops",
+          "thumbnail": "https://i.dummyjson.com/data/products/9/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/9/1.jpg",
+            "https://i.dummyjson.com/data/products/9/2.png",
+            "https://i.dummyjson.com/data/products/9/3.png",
+            "https://i.dummyjson.com/data/products/9/4.jpg",
+            "https://i.dummyjson.com/data/products/9/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 2
+        }
+      ],
+      "totalQuantity": 2,
+      "totalAmount": 2348,
+      "user": {
+        "name": "amanullah",
+        "email": "sarfarazaman38@gmail.com",
+        "password": "12345678",
+        "id": 1,
+        "addresses": [
+          {
+            "email": "sarfarazaman38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra"
+          },
+          {
+            "email": "sarfarazaman38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "8767837923"
+          },
+          {
+            "email": "sarfaramamasan38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "9767837923"
+          }
+        ]
+      },
+      "paymentMethod": "card",
+      "address": {
+        "email": "sarfarazaman38@gmail.com",
+        "firstName": "amanullah",
+        "lastName": "shaikh",
+        "pinCode": 431001,
+        "country": "India",
+        "streetAddress": "aurangabad, sillod",
+        "city": "aurangabad",
+        "region": "maharashtra",
+        "phone": "8767837923"
+      },
+      "orderStatus": "pendding",
+      "id": 1
+    },
+    {
+      "items": [
+        {
+          "title": "iPhone X",
+          "description": "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...",
+          "price": 899,
+          "discountPercentage": 17.94,
+          "rating": 4.44,
+          "stock": 34,
+          "brand": "Apple",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/2/1.jpg",
+            "https://i.dummyjson.com/data/products/2/2.jpg",
+            "https://i.dummyjson.com/data/products/2/3.jpg",
+            "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 1
+        },
+        {
+          "title": "MacBook Pro",
+          "description": "MacBook Pro 2021 with mini-LED display may launch between September, November",
+          "price": 1749,
+          "discountPercentage": 11.02,
+          "rating": 4.57,
+          "stock": 83,
+          "brand": "Apple",
+          "category": "laptops",
+          "thumbnail": "https://i.dummyjson.com/data/products/6/thumbnail.png",
+          "images": [
+            "https://i.dummyjson.com/data/products/6/1.png",
+            "https://i.dummyjson.com/data/products/6/2.jpg",
+            "https://i.dummyjson.com/data/products/6/3.png",
+            "https://i.dummyjson.com/data/products/6/4.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 2
+        },
+        {
+          "title": "Infinix INBOOK",
+          "description": "Infinix Inbook X1 Ci3 10th 8GB 256GB 14 Win10 Grey – 1 Year Warranty",
+          "price": 1099,
+          "discountPercentage": 11.83,
+          "rating": 4.54,
+          "stock": 96,
+          "brand": "Infinix",
+          "category": "laptops",
+          "thumbnail": "https://i.dummyjson.com/data/products/9/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/9/1.jpg",
+            "https://i.dummyjson.com/data/products/9/2.png",
+            "https://i.dummyjson.com/data/products/9/3.png",
+            "https://i.dummyjson.com/data/products/9/4.jpg",
+            "https://i.dummyjson.com/data/products/9/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 3
+        }
+      ],
+      "totalQuantity": 3,
+      "totalAmount": 3747,
+      "user": {
+        "name": "amanullah",
+        "email": "sarfarazaman38@gmail.com",
+        "password": "12345678",
+        "id": 1,
+        "addresses": [
+          {
+            "email": "sarfarazaman38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra"
+          },
+          {
+            "email": "sarfarazaman38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "8767837923"
+          },
+          {
+            "email": "sarfaramamasan38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "9767837923"
+          }
+        ]
+      },
+      "paymentMethod": "cash",
+      "address": {
+        "email": "sarfarazaman38@gmail.com",
+        "firstName": "amanullah",
+        "lastName": "shaikh",
+        "pinCode": 431001,
+        "country": "India",
+        "streetAddress": "aurangabad, sillod",
+        "city": "aurangabad",
+        "region": "maharashtra",
+        "phone": "8767837923"
+      },
+      "orderStatus": "pendding",
+      "id": 2
+    },
+    {
+      "items": [
+        {
+          "title": "iPhone X",
+          "description": "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...",
+          "price": 899,
+          "discountPercentage": 17.94,
+          "rating": 4.44,
+          "stock": 34,
+          "brand": "Apple",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/2/1.jpg",
+            "https://i.dummyjson.com/data/products/2/2.jpg",
+            "https://i.dummyjson.com/data/products/2/3.jpg",
+            "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 1
+        },
+        {
+          "title": "MacBook Pro",
+          "description": "MacBook Pro 2021 with mini-LED display may launch between September, November",
+          "price": 1749,
+          "discountPercentage": 11.02,
+          "rating": 4.57,
+          "stock": 83,
+          "brand": "Apple",
+          "category": "laptops",
+          "thumbnail": "https://i.dummyjson.com/data/products/6/thumbnail.png",
+          "images": [
+            "https://i.dummyjson.com/data/products/6/1.png",
+            "https://i.dummyjson.com/data/products/6/2.jpg",
+            "https://i.dummyjson.com/data/products/6/3.png",
+            "https://i.dummyjson.com/data/products/6/4.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 2
+        },
+        {
+          "title": "Infinix INBOOK",
+          "description": "Infinix Inbook X1 Ci3 10th 8GB 256GB 14 Win10 Grey – 1 Year Warranty",
+          "price": 1099,
+          "discountPercentage": 11.83,
+          "rating": 4.54,
+          "stock": 96,
+          "brand": "Infinix",
+          "category": "laptops",
+          "thumbnail": "https://i.dummyjson.com/data/products/9/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/9/1.jpg",
+            "https://i.dummyjson.com/data/products/9/2.png",
+            "https://i.dummyjson.com/data/products/9/3.png",
+            "https://i.dummyjson.com/data/products/9/4.jpg",
+            "https://i.dummyjson.com/data/products/9/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 3
+        }
+      ],
+      "totalQuantity": 3,
+      "totalAmount": 3747,
+      "user": {
+        "name": "amanullah",
+        "email": "sarfarazaman38@gmail.com",
+        "password": "12345678",
+        "id": 1,
+        "addresses": [
+          {
+            "email": "sarfarazaman38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra"
+          },
+          {
+            "email": "sarfaramamasan38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "9767837923"
+          }
+        ]
+      },
+      "paymentMethod": "cash",
+      "address": {
+        "email": "sarfaramamasan38@gmail.com",
+        "firstName": "amanullah",
+        "lastName": "shaikh",
+        "pinCode": 431001,
+        "country": "India",
+        "streetAddress": "aurangabad, sillod",
+        "city": "aurangabad",
+        "region": "maharashtra",
+        "phone": "9767837923"
+      },
+      "orderStatus": "pendding",
+      "id": 3
+    },
+    {
+      "items": [
+        {
+          "title": "iPhone 9",
+          "description": "An apple mobile which is nothing like apple",
+          "price": 549,
+          "discountPercentage": 12.96,
+          "rating": 4.69,
+          "stock": 94,
+          "brand": "Apple",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/1/1.jpg",
+            "https://i.dummyjson.com/data/products/1/2.jpg",
+            "https://i.dummyjson.com/data/products/1/3.jpg",
+            "https://i.dummyjson.com/data/products/1/4.jpg",
+            "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 2,
+          "id": 1
+        },
+        {
+          "title": "iPhone X",
+          "description": "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...",
+          "price": 899,
+          "discountPercentage": 17.94,
+          "rating": 4.44,
+          "stock": 34,
+          "brand": "Apple",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/2/1.jpg",
+            "https://i.dummyjson.com/data/products/2/2.jpg",
+            "https://i.dummyjson.com/data/products/2/3.jpg",
+            "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 2,
+          "id": 2
+        }
+      ],
+      "totalQuantity": 2,
+      "totalAmount": 1448,
+      "user": {
+        "name": "amanullah",
+        "email": "esmamanyt@gmail.com",
+        "password": "12345678",
+        "addresses": [
+          {
+            "email": "esmamanyt@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "1234567890"
+          }
+        ],
+        "id": 2
+      },
+      "paymentMethod": "cash",
+      "address": {
+        "email": "esmamanyt@gmail.com",
+        "firstName": "amanullah",
+        "lastName": "shaikh",
+        "pinCode": 431001,
+        "country": "India",
+        "streetAddress": "aurangabad, sillod",
+        "city": "aurangabad",
+        "region": "maharashtra",
+        "phone": "1234567890"
+      },
+      "orderStatus": "pendding",
+      "id": 4
+    },
+    {
+      "items": [
+        {
+          "title": "Samsung Universe 9",
+          "description": "Samsung's new variant which goes beyond Galaxy to the Universe",
+          "price": 1249,
+          "discountPercentage": 15.46,
+          "rating": 4.09,
+          "stock": 36,
+          "brand": "Samsung",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/3/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/3/1.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 1
+        },
+        {
+          "title": "iPhone X",
+          "description": "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...",
+          "price": 899,
+          "discountPercentage": 17.94,
+          "rating": 4.44,
+          "stock": 34,
+          "brand": "Apple",
+          "category": "smartphones",
+          "thumbnail": "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
+          "images": [
+            "https://i.dummyjson.com/data/products/2/1.jpg",
+            "https://i.dummyjson.com/data/products/2/2.jpg",
+            "https://i.dummyjson.com/data/products/2/3.jpg",
+            "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 2
+        }
+      ],
+      "totalQuantity": 2,
+      "totalAmount": 2148,
+      "user": {
+        "name": "amanullah",
+        "email": "sarfarazaman38@gmail.com",
+        "password": "12345678",
+        "id": 1,
+        "addresses": [
+          {
+            "email": "sarfaramamasan38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "0767837923"
+          },
+          {
+            "email": "amaan.swe@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "0767837787"
+          }
+        ]
+      },
+      "paymentMethod": "cash",
+      "address": {
+        "email": "amaan.swe@gmail.com",
+        "firstName": "amanullah",
+        "lastName": "shaikh",
+        "pinCode": 431001,
+        "country": "India",
+        "streetAddress": "aurangabad, sillod",
+        "city": "aurangabad",
+        "region": "maharashtra",
+        "phone": "0767837787"
+      },
+      "orderStatus": "pendding",
+      "id": 5
+    },
+    {
+      "items": [
+        {
+          "title": "NIGHT SUIT",
+          "description": "NIGHT SUIT RED MICKY MOUSE..  For Girls. Fantastic Suits.",
+          "price": 55,
+          "discountPercentage": 15.05,
+          "rating": 4.65,
+          "stock": 21,
+          "brand": "RED MICKY MOUSE..",
+          "category": "womens-dresses",
+          "thumbnail": "https://i.dummyjson.com/data/products/41/thumbnail.webp",
+          "images": [
+            "https://i.dummyjson.com/data/products/41/1.jpg",
+            "https://i.dummyjson.com/data/products/41/2.webp",
+            "https://i.dummyjson.com/data/products/41/3.jpg",
+            "https://i.dummyjson.com/data/products/41/4.jpg",
+            "https://i.dummyjson.com/data/products/41/thumbnail.webp"
+          ],
+          "quantity": 1,
+          "user": 1,
+          "id": 1
+        }
+      ],
+      "totalQuantity": 1,
+      "totalAmount": 55,
+      "user": {
+        "name": "amanullah",
+        "email": "sarfarazaman38@gmail.com",
+        "password": "12345678",
+        "id": 1,
+        "addresses": [
+          {
+            "email": "sarfaramamasan38@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "0767837923"
+          },
+          {
+            "email": "amaan.swe@gmail.com",
+            "firstName": "amanullah",
+            "lastName": "shaikh",
+            "pinCode": 431001,
+            "country": "India",
+            "streetAddress": "aurangabad, sillod",
+            "city": "aurangabad",
+            "region": "maharashtra",
+            "phone": "0767837787"
+          }
+        ]
+      },
+      "paymentMethod": "cash",
+      "address": {
+        "email": "sarfaramamasan38@gmail.com",
+        "firstName": "amanullah",
+        "lastName": "shaikh",
+        "pinCode": 431001,
+        "country": "India",
+        "streetAddress": "aurangabad, sillod",
+        "city": "aurangabad",
+        "region": "maharashtra",
+        "phone": "0767837923"
+      },
+      "orderStatus": "pendding",
+      "id": 6
     }
   ]
 }

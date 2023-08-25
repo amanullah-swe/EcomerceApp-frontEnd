@@ -13,7 +13,6 @@ function Login() {
         validationSchema: loginSchema,
         onSubmit: values => {
             dispatch(checkUserAsync(values));
-            console.log(values);
         },
     });
     return (

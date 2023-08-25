@@ -31,7 +31,6 @@ export function fetchProductsByFilter({ filter, sort, pagination }) {
   for (let key in pagination) {
     queryString += `${key}=${pagination[key]}&`
   }
-  console.log(queryString);
   return new Promise(async (resolve) => {
     const response = await fetch(`http://localhost:8080/products?${queryString}`);
     const data = await response.json();
