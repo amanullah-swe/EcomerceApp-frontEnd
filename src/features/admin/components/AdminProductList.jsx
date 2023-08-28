@@ -9,17 +9,17 @@ import {
   fetchAllBrandsAsync,
   fetchAllCategotiesAsync,
   updateBrands,
-  selectProductsStatus
-} from '../productListslice';
+  selectProductsStatus,
+
+} from '../../products/productListslice.js';
 
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
 import { StarIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom';
-import { ITEM_PER_PAGE } from '../../../app/constant';
-import { Pegination } from '../../../components/Pagination';
-import ProductSkeleton from '../../../components/ProductSkeleton';
+import ProductSkeleton from '../../../components/ProductSkeleton.jsx';
+const ITEM_PER_PAGE = 9;
 
 const sortOptions = [
   { name: 'Best Rating', order: 'desc', sort: 'rating', current: false },
@@ -27,23 +27,16 @@ const sortOptions = [
   { name: 'Price: High to Low', order: 'desc', sort: 'price', current: false },
 ]
 
-
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
-
-
-
-export default function ProductList() {
+export default function AdminProductList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const dispatch = useDispatch();
   const products = useSelector(selectAllProducts);
   const totalItems = useSelector(selectTotalItems);
   const brands = useSelector(selectAllBrands);
   const categories = useSelector(selectAllCategories);
+
   const status = useSelector(selectProductsStatus);
+  console.log(status);
 
   const filters = [
     {
@@ -210,7 +203,6 @@ export default function ProductList() {
 
                   {/* Product grid */}
                   <ProductGrid products={products} status={status} />
-
                 </div>
               </section>
 
@@ -225,7 +217,67 @@ export default function ProductList() {
   );
 }
 
+function Pegination({ page, setPage, handlePage, totalItems, }) {
 
+  const totalPages = Math.ceil(totalItems / ITEM_PER_PAGE);
+  return (
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+      <div className="flex flex-1 justify-between sm:hidden">
+        <div
+          onClick={() => { page > 1 ? setPage(page - 1) : null }}
+          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Previous
+        </div>
+        <div
+          onClick={() => { page < totalPages ? setPage(page + 1) : null }}
+          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Next
+        </div>
+      </div>
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing <span className="font-medium">{(page - 1) * ITEM_PER_PAGE + 1}</span> to <span className="font-medium">{page * ITEM_PER_PAGE}</span> of{' '}
+            <span className="font-medium">{totalItems}</span> results
+          </p>
+        </div>
+        <div>
+          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <div
+              onClick={() => { page > 1 ? setPage(page - 1) : null }}
+              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+            >
+              <span className="sr-only">Previous</span>
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+            </div>
+            {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
+            {Array.from({ length: totalPages }).map((item, index) => {
+              return (
+                < p key={index}
+                  onClick={(e) => { handlePage(e, index + 1) }}
+                  aria-current="page"
+                  className={`relative cursor-pointer z-10 inline-flex items-center px-4 py-2 text-sm font-semibold ${page === index + 1 ? "bg-indigo-600  text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"}`}
+                >
+                  {index + 1}
+                </p>
+              )
+            })}
+            <div
+
+              onClick={() => { page < totalPages ? setPage(page + 1) : null }}
+              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+            >
+              <span className="sr-only">Next</span>
+              <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function DesktopFilters({ handleFilter, filters }) {
   return (
@@ -384,7 +436,19 @@ function ProductGrid({ products, status }) {
     <div className="lg:col-span-3">
       <div className="bg-white">
         <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
+          <Link
+            to='/admin/product-form'
+            className="mt-4 mb-10 cursor-pointer"
+          >
+            <div
+              className="flex items-center w-1/1 sm:w-1/3 justify-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700"
+            >
+              Add Addresses
+            </div>
+          </Link>
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
+
+
             {status === 'loading' ? (
               Array.from({ length: 6 }).map((el, index) => {
                 return (
@@ -392,38 +456,49 @@ function ProductGrid({ products, status }) {
                 )
               })
             ) :
-              (products.map((product) => (
-                <Link to={`/product-details/${product.id}`} key={product.id}>
-                  <div className="group relative border-solid border-gray-300 border-2 p-2">
-                    <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                      <img
-                        src={product.thumbnail}
-                        alt={product.title}
-                        className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                      />
-                    </div>
-                    <div className="mt-4 flex justify-between">
-                      <div>
-                        <h3 className="text-sm text-gray-700">
-                          <p href={product.thumbnail}>
-                            <span aria-hidden="true" className="absolute inset-0" />
-                            {product.title}
-                          </p>
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-500 flex align-center">
-                          <StarIcon className='w-5 inline mr-1'></StarIcon><span className=''>{product.rating}</span></p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{Math.floor(product.price - product.price * (product.discountPercentage) / 100)}</p>
-                        <p className="text-sm font-medium text-gray-400 line-through">{product.price}</p>
-                      </div>
+              (
+                products.map((product) => (
+                  <>
+                    <Link to={`/admin/product-details/${product.id}`} key={product.id}>
+                      <div className="group relative border-solid border-gray-300 border-2 p-2 mb-5">
+                        <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
+                          <img
+                            src={product.thumbnail}
+                            alt={product.title}
+                            className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                          />
+                        </div>
+                        <div className="mt-4 flex justify-between">
+                          <div>
+                            <h3 className="text-sm text-gray-700">
+                              <p href={product.thumbnail}>
+                                <span aria-hidden="true" className="absolute inset-0" />
+                                {product.title}
+                              </p>
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-500 flex align-center">
+                              <StarIcon className='w-5 inline mr-1'></StarIcon><span className=''>{product.rating}</span></p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{Math.floor(product.price - product.price * (product.discountPercentage) / 100)}</p>
+                            <p className="text-sm font-medium text-gray-400 line-through">{product.price}</p>
+                          </div>
 
-                    </div>
+                        </div>
 
-                  </div>
-                </Link>
-              )))
+                      </div>
+                      <Link
+                        to={`/admin/product-form/${product.id}`}
+                        className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 mr-10  md:text-base font-medium text-white shadow-sm hover:bg-indigo-700 text-sm"
+                      >
+                        Edite
+                      </Link>
+                    </Link>
+                  </>
+                ))
+              )
             }
+
           </div>
         </div>
         {/* end of product list*/}

@@ -20,4 +20,21 @@ const addressFormSchema = object({
     region: string().required('enter state name'),
     phone: string().min(10).max(10).required('Enter Mobile number')
 });
-export { registerSchema, loginSchema, addressFormSchema }
+
+const productSchema = object({
+    title: string().required(),
+    description: string().required(),
+    price: string().required(),
+    discountPercentage: string().required(),
+    rating: string().required(),
+    stock: string().required(),
+    brand: string().required(),
+    category: string().required(),
+    thumbnail: string().required(),
+    image0: string().required(),
+    image1: string().required(),
+    image2: string().required(),
+    image3: string().required(),
+    image4: string().required(),
+})
+export { registerSchema, loginSchema, addressFormSchema, productSchema }

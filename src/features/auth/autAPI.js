@@ -25,7 +25,7 @@ export function checkUser(loginInfo) {
         reject({ message: 'Invalid password' });
       }
     }
-    reject({ message: 'use not found' });
+    reject({ message: 'User not found' });
   }
   );
 }

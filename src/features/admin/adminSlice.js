@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchAllBrands, fetchAllCategories, fetchProductById, fetchAllProducts, fetchProductsByFilter, createProduct, updateProductById } from './projuctListApi';
+import { fetchAllBrands, fetchAllCategories, fetchProductById, fetchAllProducts, fetchProductsByFilter } from './adminApi.js';
 
 const initialState = {
   products: [],
@@ -46,21 +46,7 @@ export const fetchProductByIdAsync = createAsyncThunk(
   }
 );
 
-export const createProductAsync = createAsyncThunk(
-  'product/createProduct',
-  async (product) => {
-    const response = await createProduct(product);
-    return response;
-  }
-);
 
-export const updateProductByIdAsync = createAsyncThunk(
-  'product/updatepProductById',
-  async (update) => {
-    const response = await updateProductById(update);
-    return response;
-  }
-);
 export const productsSlice = createSlice({
   name: 'products',
   initialState,
@@ -117,21 +103,7 @@ export const productsSlice = createSlice({
         state.status = 'idle';
         state.selectedProduct = action.payload;
       })
-      .addCase(createProductAsync.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(createProductAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.products.push(action.payload);
-      })
-      .addCase(updateProductByIdAsync.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(updateProductByIdAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
-        const index = state.products.findIndex(product => product.id === action.payload.id)
-        state.items[index] = action.payload;
-      });
+
   },
 });
 
@@ -141,5 +113,6 @@ export const selectSelectedProduct = (state) => state.products.selectedProduct;
 export const selectAllBrands = (state) => state.products.brands;
 export const selectAllCategories = (state) => state.products.categories;
 export const selectTotalItems = (state) => state.products.totalItems;
-export const selectProductsStatus = (state) => state.products.status;
+export const selectAdminStatus = (state) => { state.products.status };
+
 export default productsSlice.reducer;

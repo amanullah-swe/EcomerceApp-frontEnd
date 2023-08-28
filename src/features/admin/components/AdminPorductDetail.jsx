@@ -3,11 +3,9 @@ import { StarIcon } from '@heroicons/react/20/solid'
 import { RadioGroup } from '@headlessui/react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchProductByIdAsync, selectSelectedProduct } from '../productListslice'
-import { createCartItemAsync, selectCartItems } from '../../cart/cartSlice'
+import { fetchProductByIdAsync, selectSelectedProduct } from '../adminSlice'
+import { createCartItemAsync } from '../../cart/cartSlice'
 import { selectUserInfo } from '../../user/userSlice'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const colors = [
     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -34,67 +32,26 @@ const breadcrumbs = [
     { id: 1, name: 'Men', href: '#' },
     { id: 2, name: 'Clothing', href: '#' },
 ]
-// const product = {
-//     name: 'Basic Tee 6-Pack',
-//     price: '$192',
-//     href: '#',
-//    
-//     images: [
-//         {
-//             src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg',
-//             alt: 'Two each of gray, white, and black shirts laying flat.',
-//         },
-//         {
-//             src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg',
-//             alt: 'Model wearing plain black basic tee.',
-//         },
-//         {
-//             src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg',
-//             alt: 'Model wearing plain gray basic tee.',
-//         },
-//         {
-//             src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg',
-//             alt: 'Model wearing plain white basic tee.',
-//         },
-//     ],
-
-
-//     description:
-//         'The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: "Black". Need to add an extra pop of color to your outfit? Our white tee has you covered.',
-
-//     details:
-//         'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-// }
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductDetial() {
+export default function AdminProductDetial() {
     const [selectedColor, setSelectedColor] = useState(colors[0])
     const [selectedSize, setSelectedSize] = useState(sizes[2]);
     const dispatch = useDispatch();
     const { id } = useParams();
-
     const product = useSelector(selectSelectedProduct);
     const user = useSelector(selectUserInfo);
-    const items = useSelector(selectCartItems);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (items.findIndex(item => item.productId === product.id) < 0) {
-            const newItem = { ...product, productId: product.id, quantity: 1, user: user.id }
-            delete newItem["id"];
-            dispatch(createCartItemAsync(newItem));
-            itemsSuccesFullyAdded();
-            // TODO: LATER WE CHECK OUR API IS SUCCES OR REJECT THEN WE SHOW SOME MESSAGE FOR TIME BEING THIS IS FOR TEST PURPOSE
-        } else {
-            console.log('');
-            CartItemDuplicateWarning();
-        }
-
+        const newItem = { ...product, quantity: 1, user: user.id }
+        delete newItem["id"];
+        dispatch(createCartItemAsync(newItem));
     }
 
 
@@ -102,30 +59,9 @@ export default function ProductDetial() {
         dispatch(fetchProductByIdAsync(id));
     }, [dispatch, id]);
 
-    const CartItemDuplicateWarning = () => toast.warn('Already added', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        theme: "light",
-    });
-    const itemsSuccesFullyAdded = () => toast.success(`${product.title} added into Cart`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        theme: "light",
-    });
     return (
         <>{product &&
             <div className="bg-white">
-                <ToastContainer limit={1} />
                 <div className="pt-6">
                     <nav aria-label="Breadcrumb">
                         <ol role="list" className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -328,7 +264,7 @@ export default function ProductDetial() {
                                     type="submit"
                                     className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                 >
-                                    Add to cart
+                                    Edite Product
                                 </button>
                             </form>
                         </div>

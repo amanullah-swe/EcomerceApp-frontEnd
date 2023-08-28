@@ -7,7 +7,9 @@ import { useFormik } from 'formik';
 import { addressFormSchema } from '../schema/yupValidationSchema';
 import { useState } from 'react';
 import { createOrderAsync, selectCurrentOrder } from '../features/order/orderSlice';
-import { selectUserInfo } from '../features/user/userSlice';
+import { selectUserInfo, updateUserAsync } from '../features/user/userSlice';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -49,7 +51,7 @@ export default function CheckoutPage() {
         e.stopPropagation();
         setPaymentMethod(e.target.id)
     }
-    const { handleChange, handleReset, handleBlur, handleSubmit, errors, touched, values } = useFormik({
+    const { handleChange, handleReset, resetForm, handleBlur, handleSubmit, errors, touched, values } = useFormik({
         initialValues: {
             email: '',
             firstName: '',
@@ -73,7 +75,7 @@ export default function CheckoutPage() {
             }
 
             dispatch(updateUserAsync({ ...user, addresses }));
-
+            resetForm();
         },
     });
     const handleOrder = (e) => {
@@ -83,20 +85,31 @@ export default function CheckoutPage() {
             const order = { items, totalQuantity, totalAmount, user, paymentMethod, address: addressSelected, orderStatus: 'pendding' };
             dispatch(createOrderAsync(order));
 
+
         }
         else {
-            console.log('select Adress and payment method');
+            warning();
+            console.log('');
         }
 
         // TODO
         // change the stock in the backend
-        // 3 clear cart
     }
-
+    const warning = () => toast.warn('select Address and payment method', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: 0,
+        theme: "light",
+    });
     return (
         <>   {!items.length ? <Navigate to='/' replace={true}></Navigate> : null}
             {currentOrder ? <Navigate to='/order-succes' replace={true}></Navigate> : null}
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+                <ToastContainer limit={1} />
                 <div className="grid md:grid-cols-5 grid-flow-row gap-3">
                     {/* Personal Information Section */}
                     <div className="w-full col-span-3 bg-white p-4 sm:width-100 shadow-xl">

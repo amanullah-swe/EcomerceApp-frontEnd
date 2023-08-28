@@ -4,6 +4,10 @@ import { loginSchema } from '../../../schema/yupValidationSchema';
 import { checkUserAsync, selectError, selectisLoggedInUser } from '../authSlice';
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 function Login() {
     const dispatch = useDispatch();
     const error = useSelector(selectError);
@@ -13,11 +17,23 @@ function Login() {
         validationSchema: loginSchema,
         onSubmit: values => {
             dispatch(checkUserAsync(values));
+            error.message && loginError();
         },
+    });
+    const loginError = () => toast.error(error.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: 0,
+        theme: "light",
     });
     return (
         <div>{user ? <Navigate to='/'></Navigate> : null}
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+                <ToastContainer limit={1} />
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
                         className="mx-auto h-10 w-auto"
@@ -72,7 +88,6 @@ function Login() {
                                 />
                                 {errors.password && touched.password ? <p className='text-red-500'>{errors.password}</p> : null}
                             </div>
-                            {error ? <p className='text-red-500'>{error.message}</p> : null}
                         </div>
 
                         <div>

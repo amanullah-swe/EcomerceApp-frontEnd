@@ -4,6 +4,9 @@ import { addressFormSchema } from "../../../schema/yupValidationSchema";
 import { useFormik } from "formik";
 import { useState } from "react";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function UserProfile() {
     const user = useSelector(selectUserInfo);
     const dispatch = useDispatch();
@@ -32,6 +35,7 @@ function UserProfile() {
                 let newAddresses = [...user.addresses];
                 newAddresses.push(values);
                 dispatch(updateUserAsync({ ...user, addresses: newAddresses }));
+                AddedAddressSucces();
             } else {
                 console.log('some thing wrong');
             }
@@ -52,11 +56,33 @@ function UserProfile() {
         newAddresses.splice(showForm, 1);
         console.log(newAddresses);
         dispatch(updateUserAsync({ ...user, addresses: newAddresses }));
+        removeAddressSucces();
     }
+    const removeAddressSucces = () => toast.success('Removed Succesfully', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: 0,
+        theme: "light",
+    });
+    const AddedAddressSucces = () => toast.success('Added Succesfully', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: 0,
+        theme: "light",
+    });
     return (
         <>
             {/* Shopping Cart Section */}
             <div className="w-full col-span-2 px-3">
+                <ToastContainer />
                 <div className="flex  flex-col overflow-y-hidden bg-white shadow-xl px-4">
                     <div className="flex-1 overflow-y-auto px-0 py-6 sm:px-2">
                         <div className="flex items-start justify-between">
@@ -66,6 +92,7 @@ function UserProfile() {
                         <div className="mt-8">
                             <h1 className="text-lg font-medium text-gray-900">Name : {user.name}</h1>
                             <h1 className="text-lg font-medium text-gray-900">Email : {user.email}</h1>
+                            {user.role === "admin" && <h1 className="text-base font-medium text-gray-900">Role : {user.role}</h1>}
                         </div>
                     </div>
                     {/* form section  */}

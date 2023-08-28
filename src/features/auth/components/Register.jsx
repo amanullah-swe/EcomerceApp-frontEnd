@@ -11,7 +11,7 @@ function Register() {
         initialValues: { name: '', email: '', password: '', },
         validationSchema: registerSchema,
         onSubmit: values => {
-            dispatch(createUserAsync({ ...values, addresses: [] }));
+            dispatch(createUserAsync({ ...values, addresses: [], role: 'user' }));
             navigate('/login');
         },
     });
