@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useFormik } from 'formik';
 import { loginSchema } from '../../../schema/yupValidationSchema';
 import { checkUserAsync, selectError, selectisLoggedInUser } from '../authSlice';
@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { fetchCartItemsByUserIdAsync } from '../../cart/cartSlice';
+import { fetchLoddInUserAsync } from '../../user/userSlice';
 
 
 function Login() {
@@ -17,12 +19,19 @@ function Login() {
         validationSchema: loginSchema,
         onSubmit: values => {
             dispatch(checkUserAsync(values));
-            error.message && loginError();
+            error && loginError();
         },
     });
+
+    useEffect(() => {
+        return () => {
+            dispatch(fetchCartItemsByUserIdAsync());
+            dispatch(fetchLoddInUserAsync());
+        }
+    }, [])
     const loginError = () => toast.error(error.message, {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -31,7 +40,8 @@ function Login() {
         theme: "light",
     });
     return (
-        <div>{user ? <Navigate to='/'></Navigate> : null}
+        <div>
+            {user ? <Navigate to='/'></Navigate> : null}
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <ToastContainer limit={1} />
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">

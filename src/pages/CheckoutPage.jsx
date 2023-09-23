@@ -5,9 +5,9 @@ import { StarIcon } from '@heroicons/react/24/outline';
 
 import { useFormik } from 'formik';
 import { addressFormSchema } from '../schema/yupValidationSchema';
-import { useState } from 'react';
-import { createOrderAsync, selectCurrentOrder } from '../features/order/orderSlice';
-import { selectUserInfo, updateUserAsync } from '../features/user/userSlice';
+import { useEffect, useState } from 'react';
+import { createOrderAsync, paymentAsync, selectCurrentOrder } from '../features/order/orderSlice';
+import { fetchLoddInUserAsync, selectUserInfo, updateUserAsync } from '../features/user/userSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,11 +17,15 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function CheckoutPage() {
     // shoping cart
     const items = useSelector(selectCartItems);
-    const totalAmount = items.reduce((totalAmount, item) => (item.quantity * item.price + totalAmount), 0);
+    const totalAmount = items.reduce((totalAmount, item) => (item.quantity * item.product.price + totalAmount), 0);
     const totalQuantity = items.reduce((Quantity, item) => (item.quantity + Quantity), 0);
     const currentOrder = useSelector(selectCurrentOrder);
-
     const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(fetchLoddInUserAsync());
+    }, [dispatch])
 
     const handleQuantity = (e, item) => {
         e.preventDefault();
@@ -47,10 +51,14 @@ export default function CheckoutPage() {
         e.stopPropagation();
         setAddressSelected(address);
     };
+
+
     const handlePayments = (e) => {
         e.stopPropagation();
         setPaymentMethod(e.target.id)
     }
+
+
     const { handleChange, handleReset, resetForm, handleBlur, handleSubmit, errors, touched, values } = useFormik({
         initialValues: {
             email: '',
@@ -82,10 +90,10 @@ export default function CheckoutPage() {
         e.preventDefault();
         e.stopPropagation();
         if (paymentMethod && addressSelected) {
-            const order = { items, totalQuantity, totalAmount, user, paymentMethod, address: addressSelected, orderStatus: 'pendding' };
-            dispatch(createOrderAsync(order));
-
-
+            const newItems = items.map((item) => ({ ...item.product, quantity: item.quantity }));
+            const order = { items: newItems, totalQuantity, totalAmount, user: user.id, paymentMethod, address: addressSelected };
+            if (paymentMethod === 'cash') dispatch(createOrderAsync(order));
+            else dispatch(paymentAsync(order));
         }
         else {
             warning();
@@ -414,11 +422,11 @@ export default function CheckoutPage() {
                                     <div className="flow-root">
                                         <ul role="list" className="-my-6 divide-y divide-gray-200">
                                             {items.map((item) => (
-                                                <li key={item.id} className="flex py-6">
+                                                <li key={item.product.id} className="flex py-6">
                                                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                         <img
-                                                            src={item.thumbnail}
-                                                            alt={item.title}
+                                                            src={item.product.thumbnail}
+                                                            alt={item.product.title}
                                                             className="h-full w-full object-cover object-center"
                                                         />
                                                     </div>
@@ -427,15 +435,15 @@ export default function CheckoutPage() {
                                                         <div>
                                                             <div className="flex justify-between text-base font-medium text-gray-900">
                                                                 <h3>
-                                                                    <a href={item.href}>{item.title}</a>
+                                                                    <a href={item.product.href}>{item.product.title}</a>
                                                                 </h3>
-                                                                <p className="ml-4">$ {item.price}</p>
+                                                                <p className="ml-4">$ {item.product.price}</p>
                                                             </div>
-                                                            <p className="mt-1 text-sm text-gray-500"><StarIcon className='w-4 inline mr-1' />{item.rating}</p>
+                                                            <p className="mt-1 text-sm text-gray-500"><StarIcon className='w-4 inline mr-1' />{item.product.rating}</p>
                                                         </div>
                                                         <div className="flex flex-1 items-end justify-between text-sm">
                                                             <p className="text-gray-500">Qty
-                                                                <select name="" id="" className='p-1' onChange={(e) => handleQuantity(e, item)} value={item.quantity}>
+                                                                <select name="" id="" className='p-1' onChange={(e) => handleQuantity(e, item)} value={item.product.quantity}>
                                                                     <option id="1" className='p-2'>1</option>
                                                                     <option id="2" className='p-2'>2</option>
                                                                     <option id="3" className='p-2'>3</option>

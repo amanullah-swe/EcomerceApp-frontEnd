@@ -12,7 +12,7 @@ import Register from './features/auth/components/Register';
 import CheckoutPage from './pages/CheckoutPage';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectisLoggedInUser } from './features/auth/authSlice';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { fetchCartItemsByUserIdAsync } from './features/cart/cartSlice';
 import ErrorPage from './pages/404';
 import OrderSuccesPage from './pages/OrderSuccesPage';
@@ -29,7 +29,7 @@ import AdminOrders from './features/admin/components/AdminOrders';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Protected><Home /> </Protected>,
+    element: <Home />,
   },
   {
     path: "/login",
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/order-succes",
-    element: <Protected><OrderSuccesPage /></Protected>,
+    element: <OrderSuccesPage />,
   },
   {
     path: "/my-orders",
@@ -57,11 +57,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/my-profile",
-    element: <Protected><MyProfilePage /> </Protected>,
+    element: <MyProfilePage />,
   },
   {
     path: "/logout",
-    element: <Protected><Logout /> </Protected>,
+    element: <Logout />,
   },
   {
     path: "/admin",
@@ -84,6 +84,10 @@ const router = createBrowserRouter([
     element: <ProtectedAdmin><AdminOrders /> </ProtectedAdmin>,
   },
   {
+    path: "/stripe/order-success",
+    element: <OrderSuccesPage></OrderSuccesPage>,
+  },
+  {
     path: "*",
     element: <ErrorPage />,
   },
@@ -92,14 +96,10 @@ const router = createBrowserRouter([
 function App() {
 
   const dispatch = useDispatch();
-  const user = useSelector(selectisLoggedInUser);
-
   useEffect(() => {
-    if (user) {
-      dispatch(fetchCartItemsByUserIdAsync(user.id))
-      dispatch(fetchLoddInUserAsync(user.id));
-    }
-  }, [dispatch, user]);
+    dispatch(fetchCartItemsByUserIdAsync());
+    dispatch(fetchLoddInUserAsync());
+  }, [dispatch]);
 
 
   return (

@@ -4,8 +4,8 @@ import { RadioGroup } from '@headlessui/react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProductByIdAsync, selectSelectedProduct } from '../productListslice'
-import { createCartItemAsync, selectCartItems } from '../../cart/cartSlice'
-import { selectUserInfo } from '../../user/userSlice'
+import { createCartItemAsync, selectCartError, selectCartItems } from '../../cart/cartSlice'
+import { fetchLoddInUserAsync, selectUserInfo } from '../../user/userSlice'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -80,31 +80,39 @@ export default function ProductDetial() {
     const product = useSelector(selectSelectedProduct);
     const user = useSelector(selectUserInfo);
     const items = useSelector(selectCartItems);
+    const cartError = useSelector(selectCartError);
 
-    const handleAddToCart = (e) => {
+    const handleAddToCart = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (items.findIndex(item => item.productId === product.id) < 0) {
-            const newItem = { ...product, productId: product.id, quantity: 1, user: user.id }
-            delete newItem["id"];
-            dispatch(createCartItemAsync(newItem));
-            itemsSuccesFullyAdded();
-            // TODO: LATER WE CHECK OUR API IS SUCCES OR REJECT THEN WE SHOW SOME MESSAGE FOR TIME BEING THIS IS FOR TEST PURPOSE
+
+        if (items.findIndex(item => item.product.id === product.id) < 0) {
+            const newItem = { product: product.id, quantity: 1, user: user.id };
+            try {
+                // Dispatch the action and wait for the API response
+                await dispatch(createCartItemAsync(newItem));
+                // If the API call was successful, show a success message
+                itemsSuccesFullyAdded();
+            } catch (error) {
+                // If the API call failed, show an error message
+                CartItemError();
+            }
         } else {
-            console.log('');
+            console.log('Item already exists in the cart');
             CartItemDuplicateWarning();
         }
+    };
 
-    }
 
 
     useEffect(() => {
         dispatch(fetchProductByIdAsync(id));
+        dispatch(fetchLoddInUserAsync());
     }, [dispatch, id]);
 
     const CartItemDuplicateWarning = () => toast.warn('Already added', {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -112,9 +120,21 @@ export default function ProductDetial() {
         progress: 0,
         theme: "light",
     });
+
+    const CartItemError = () => toast.error('some error occur', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: 0,
+        theme: "light",
+    });
+
     const itemsSuccesFullyAdded = () => toast.success(`${product.title} added into Cart`, {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

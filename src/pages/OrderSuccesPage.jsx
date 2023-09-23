@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link, Navigate } from "react-router-dom"
+import { Link, Navigate, useLocation } from "react-router-dom"
 import { selectCurrentOrder, setCurrentOrderNull } from "../features/order/orderSlice"
 import { deleteCartAllItemsAsync } from "../features/cart/cartSlice";
 import { selectUserInfo } from "../features/user/userSlice";
@@ -9,18 +9,25 @@ function OrderSuccesPage() {
     const currentOrder = useSelector(selectCurrentOrder);
     const dispatch = useDispatch();
     const user = useSelector(selectUserInfo);
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const orderId = queryParams.get('orderId');
     useEffect(() => {
         dispatch(deleteCartAllItemsAsync(user.id));
+        console.log('order sucess mount');
         return () => {
+            console.log('order sucess umount');
             dispatch(setCurrentOrderNull());
         }
     }, [dispatch, user])
     return (
-        <>{currentOrder?.id ?
+        <>{currentOrder || orderId ?
             <main className="grid min-h-screen  place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
                 <div className="text-center">
                     <p className="text-base font-semibold text-indigo-600">Order succesfully placed</p>
-                    <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Order Id #{currentOrder.id}</h1>
+                    {currentOrder && <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Order Id #{currentOrder.id}</h1>}
+                    {orderId && <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Order Id #{orderId}</h1>}
                     <p className="mt-6 text-base leading-7 text-gray-600">Go to My account / My orders to see orders</p>
                     <div className="mt-10 flex items-center justify-center gap-x-6">
                         <Link
@@ -32,8 +39,7 @@ function OrderSuccesPage() {
                     </div>
                 </div>
             </main>
-            :
-            <Navigate to={'/'} replace={true}></Navigate>}
+            : <Navigate to={'/'} replace={true}></Navigate>}
         </>
     )
 }

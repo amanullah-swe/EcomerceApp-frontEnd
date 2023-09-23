@@ -349,7 +349,7 @@ export default function ProductForm() {
                                 <input
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.images}
+                                    value={values.image4}
                                     type="text"
                                     name="image4"
                                     id="image4"

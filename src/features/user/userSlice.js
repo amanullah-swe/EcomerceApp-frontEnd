@@ -2,23 +2,28 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchLoddInUser, fetchUserOrders, updateUser } from './userAPI';
 
 const initialState = {
-  userInfo: null,
+  userInfo: {
+    name: '',
+    email: '',
+    role: '',
+    adresses: []
+  },
   status: 'idle',
-  userOrders: []
+  userOrders: [],
+  userError: null
 };
 
 export const fetchLoddInUserAsync = createAsyncThunk(
   'user/fetchLoddInUser',
-  async (amount) => {
-    const response = await fetchLoddInUser(amount);
-
+  async () => {
+    const response = await fetchLoddInUser();
     return response;
   }
 );
 export const fetchUserOrdersAsync = createAsyncThunk(
   'user/fetchUserOrders',
-  async (userId) => {
-    const response = await fetchUserOrders(userId);
+  async () => {
+    const response = await fetchUserOrders();
 
     return response;
   }
@@ -49,14 +54,28 @@ export const userSlice = createSlice({
       .addCase(fetchLoddInUserAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.userInfo = action.payload;
+        state.userError = null;
       })
+      .addCase(fetchLoddInUserAsync.rejected, (state, action) => {
+        state.status = 'reject';
+        state.userError = action.error;
+      })
+
+
       .addCase(fetchUserOrdersAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchUserOrdersAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.userOrders = action.payload;
+        state.userError = null;
       })
+      .addCase(fetchUserOrdersAsync.rejected, (state, action) => {
+        state.status = 'reject';
+        state.userError = action.error;
+      })
+
+
       .addCase(updateUserAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -71,6 +90,5 @@ export const { increment, } = userSlice.actions;
 
 export const selectUserInfo = (state) => state.user.userInfo;
 export const selectUserOrders = (state) => state.user.userOrders;
-
-
+export const selectUserError = (state) => state.user.userError;
 export default userSlice.reducer;

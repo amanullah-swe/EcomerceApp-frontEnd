@@ -62,7 +62,7 @@ export const updateProductByIdAsync = createAsyncThunk(
   }
 );
 export const productsSlice = createSlice({
-  name: 'products',
+  name: 'product',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -136,10 +136,10 @@ export const productsSlice = createSlice({
 });
 
 export const { increment, updateBrands } = productsSlice.actions;
-export const selectAllProducts = (state) => state.products.products;
-export const selectSelectedProduct = (state) => state.products.selectedProduct;
-export const selectAllBrands = (state) => state.products.brands;
-export const selectAllCategories = (state) => state.products.categories;
-export const selectTotalItems = (state) => state.products.totalItems;
-export const selectProductsStatus = (state) => state.products.status;
+export const selectAllProducts = (state) => state.product.products;
+export const selectSelectedProduct = (state) => state.product.selectedProduct;
+export const selectAllBrands = (state) => state.product.brands;
+export const selectAllCategories = (state) => state.product.categories;
+export const selectTotalItems = (state) => state.product.totalItems;
+export const selectProductsStatus = (state) => state.product.status;
 export default productsSlice.reducer;

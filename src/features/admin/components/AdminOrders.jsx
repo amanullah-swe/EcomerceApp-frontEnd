@@ -13,7 +13,7 @@ function AdminOrders() {
 
     const [editableOrderId, setEditableOrderId] = useState(-1);
     const [page, setPage] = useState(1);
-    const [sort, setSort] = useState({ _order: 'asc', _sort: '' });
+    const [sort, setSort] = useState({ _order: 'asc', _sort: null });
     const handleShow = (index) => {
         console.log('show');
 
@@ -34,9 +34,11 @@ function AdminOrders() {
     }
 
     const handleSort = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const filde = e.target.id;
         let newSort;
-
+        // implement the debounce and thoutling for the beckend calls
         // note _sort Is fild name and _order Is value it may assending=asc or descending=desc this server featur
         if (sort._sort === filde) {
             newSort = {
@@ -45,7 +47,7 @@ function AdminOrders() {
             }
         } else {
             newSort = {
-                ...sort,
+                _order: 'asc',
                 _sort: filde
             }
         }
@@ -114,7 +116,7 @@ function AdminOrders() {
                             </thead>
                             <tbody>
 
-                                {orders.map((order, index) => {
+                                {orders && orders.map((order, index) => {
                                     return <tr key={index}>
                                         <td className="text-center text-dark font-medium text-base py-5 bg-white border-b border-[#E8E8E8]">{order.id}</td>
 

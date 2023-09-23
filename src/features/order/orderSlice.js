@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createOrder, fetchALLOrders, updateOrder, fetchOrdersByFilter } from './orderAPI';
+import { createOrder, fetchALLOrders, updateOrder, fetchOrdersByFilter, payment } from './orderAPI';
 
 
 const initialState = {
@@ -7,8 +7,10 @@ const initialState = {
   status: 'idle',
   currentOrder: null,
   AllOrders: [],
-  totalOrders: 0
+  totalOrders: 0,
+  paymentstatus: null
 };
+
 
 export const createOrderAsync = createAsyncThunk(
   'order/createOrder',
@@ -26,6 +28,7 @@ export const fetchALLOrdersAsync = createAsyncThunk(
     return response;
   }
 );
+
 export const updateOrderAsync = createAsyncThunk(
   'order/updateOrder',
   async (update) => {
@@ -33,6 +36,7 @@ export const updateOrderAsync = createAsyncThunk(
     return response;
   }
 );
+
 export const fetchOrdersByFilterAsync = createAsyncThunk(
   'order/fetchOrdersByFilter',
   async ({ sort, pagination }) => {
@@ -41,8 +45,16 @@ export const fetchOrdersByFilterAsync = createAsyncThunk(
   }
 );
 
+export const paymentAsync = createAsyncThunk(
+  'order/payment',
+  async (order) => {
+    const response = await payment(order);
+    return response;
+  }
+)
+
 export const orderSlice = createSlice({
-  name: 'counter',
+  name: 'order',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -85,7 +97,21 @@ export const orderSlice = createSlice({
         state.status = 'idle';
         state.AllOrders = action.payload.orders;
         state.totalOrders = action.payload.totalOrders
-      });
+      })
+
+      .addCase(paymentAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(paymentAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.paymentstatus = action.payload;
+      })
+      .addCase(paymentAsync.rejected, (state, action) => {
+        state.status = 'reject';
+        state.paymentstatus = action.payload;
+      })
+
+
   },
 });
 

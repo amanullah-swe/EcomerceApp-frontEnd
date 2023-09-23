@@ -27,6 +27,10 @@ const sortOptions = [
   { name: 'Price: High to Low', order: 'desc', sort: 'price', current: false },
 ]
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
 export default function AdminProductList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const dispatch = useDispatch();
@@ -443,7 +447,7 @@ function ProductGrid({ products, status }) {
             <div
               className="flex items-center w-1/1 sm:w-1/3 justify-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700"
             >
-              Add Addresses
+              Add Product
             </div>
           </Link>
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">

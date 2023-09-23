@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteCartItemByIdAsync, selectCartItems, updateCartItemByIdAsync } from './cartSlice';
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { StarIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 export default function Cart({ open, setOpen }) {
   const items = useSelector(selectCartItems);
-  const totalAmount = items.reduce((totalAmount, item) => (item.quantity * item.price + totalAmount), 0);
+  const totalAmount = items.reduce((totalAmount, item) => (item.quantity * item.product.price + totalAmount), 0);
   const totalQuantity = items.reduce((Quantity, item) => (item.quantity + Quantity), 0);
 
 
@@ -82,8 +82,8 @@ export default function Cart({ open, setOpen }) {
                                 <li key={item.id} className="flex py-6">
                                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                     <img
-                                      src={item.thumbnail}
-                                      alt={item.title}
+                                      src={item.product.thumbnail}
+                                      alt={item.product.title}
                                       className="h-full w-full object-cover object-center"
                                     />
                                   </div>
@@ -92,9 +92,9 @@ export default function Cart({ open, setOpen }) {
                                     <div>
                                       <div className="flex justify-between text-base font-medium text-gray-900">
                                         <h3>
-                                          <p>{item.title}</p>
+                                          <p>{item.product.title}</p>
                                         </h3>
-                                        <p className="ml-4">$ {item.price}</p>
+                                        <p className="ml-4">$ {item.product.price}</p>
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500"><StarIcon className='w-4 inline mr-1' />{item.rating}</p>
                                     </div>

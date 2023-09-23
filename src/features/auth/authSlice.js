@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { checkUser, createUser, updateUser } from './autAPI';
+import { checkUser, createUser, logoutUser, updateUser } from './autAPI';
 
 const initialState = {
   isLoggedInUser: null,
   error: null,
   status: 'idle',
+  message: null
 };
 
 export const createUserAsync = createAsyncThunk(
@@ -22,9 +23,16 @@ export const checkUserAsync = createAsyncThunk(
   }
 );
 export const updateUserAsync = createAsyncThunk(
-  'cart/updateUser',
+  'user/updateUser',
   async (update) => {
     const response = await updateUser(update);
+    return response;
+  }
+);
+export const logoutUserAsync = createAsyncThunk(
+  'cart/updateUser',
+  async (update) => {
+    const response = await logoutUser(update);
     return response;
   }
 );
@@ -50,6 +58,12 @@ export const counterSlice = createSlice({
         state.status = 'idle';
         state.user = action.payload;
       })
+      .addCase(createUserAsync.rejected, (state, action) => {
+        state.status = 'idle';
+        state.error = action.payload;
+      })
+
+
       .addCase(checkUserAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -61,12 +75,30 @@ export const counterSlice = createSlice({
         state.status = 'idle';
         state.error = action.error;
       })
+
+
       .addCase(updateUserAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(updateUserAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.isLoggedInUser = action.payload;
+      })
+      .addCase(updateUserAsync.rejected, (state, action) => {
+        state.status = 'reject';
+        state.error = action.error;
+      })
+
+      .addCase(logoutUserAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(logoutUserAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.message = action.payload;
+      })
+      .addCase(logoutUserAsync.rejected, (state, action) => {
+        state.status = 'reject';
+        state.error = action.error;
       })
   },
 });

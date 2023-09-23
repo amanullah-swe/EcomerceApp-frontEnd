@@ -1,16 +1,22 @@
 import { useDispatch, useSelector } from "react-redux"
-import { selectUserInfo, updateUserAsync } from "../userSlice";
+import { fetchLoddInUserAsync, selectUserError, selectUserInfo, updateUserAsync } from "../userSlice";
 import { addressFormSchema } from "../../../schema/yupValidationSchema";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Navigate } from "react-router-dom";
 
 function UserProfile() {
     const user = useSelector(selectUserInfo);
     const dispatch = useDispatch();
+    const userError = useSelector(selectUserError);
+
     const [showForm, setShowForm] = useState(-2);
+    useEffect(() => {
+        dispatch(fetchLoddInUserAsync());
+    }, [dispatch]);
 
     const { handleChange, handleReset, handleBlur, resetForm, setValues, handleSubmit, errors, touched, values } = useFormik({
         initialValues: {
@@ -49,6 +55,7 @@ function UserProfile() {
         const address = user.addresses[index];
         setValues(address);
     }
+
     const handleRemoveAddress = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -58,6 +65,7 @@ function UserProfile() {
         dispatch(updateUserAsync({ ...user, addresses: newAddresses }));
         removeAddressSucces();
     }
+
     const removeAddressSucces = () => toast.success('Removed Succesfully', {
         position: "top-center",
         autoClose: 1000,
@@ -68,6 +76,7 @@ function UserProfile() {
         progress: 0,
         theme: "light",
     });
+
     const AddedAddressSucces = () => toast.success('Added Succesfully', {
         position: "top-center",
         autoClose: 1000,
@@ -81,6 +90,7 @@ function UserProfile() {
     return (
         <>
             {/* Shopping Cart Section */}
+            {userError ? <Navigate to='/login' replace={true}></Navigate> : null}
             <div className="w-full col-span-2 px-3">
                 <ToastContainer />
                 <div className="flex  flex-col overflow-y-hidden bg-white shadow-xl px-4">

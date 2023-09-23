@@ -1,14 +1,14 @@
-import { selectisLoggedInUser } from '../../auth/authSlice'
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
+import { selectUserInfo } from '../../user/userSlice';
 // eslint-disable-next-line react/prop-types
 function Protected({ children }) {
-    const user = useSelector(selectisLoggedInUser);
+    const user = useSelector(selectUserInfo);
     if (!user) {
-        return <Navigate to='/login'></Navigate>
+        return <Navigate to={'/login'} replace={true}></Navigate>
     }
     if (user && user.role !== "admin") {
-        return <Navigate to='/'></Navigate>
+        return <Navigate to={'/login'} replace={true}></Navigate>
     }
     return (
         <>{children}</>

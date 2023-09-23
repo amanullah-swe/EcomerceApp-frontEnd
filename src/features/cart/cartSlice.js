@@ -2,7 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createCartItem, fetchCartItemsByUserId, updateCartItemById, deleteCartItemById, deleteCartAllItems } from './cartAPI';
 
 const initialState = {
-  items: []
+  items: [],
+  error: null
 };
 
 export const createCartItemAsync = createAsyncThunk(
@@ -14,8 +15,8 @@ export const createCartItemAsync = createAsyncThunk(
 );
 export const fetchCartItemsByUserIdAsync = createAsyncThunk(
   'cart/fetchCartItemsByUserId',
-  async (userId) => {
-    const response = await fetchCartItemsByUserId(userId);
+  async () => {
+    const response = await fetchCartItemsByUserId();
     return response;
   }
 );
@@ -35,10 +36,11 @@ export const deleteCartItemByIdAsync = createAsyncThunk(
 );
 
 export const deleteCartAllItemsAsync = createAsyncThunk(
-  'order/deleteCartAllItems',
-  async (order) => {
-    const response = await deleteCartAllItems(order);
-    return response;
+  'cart/deleteCartAllItems',
+  async (userId) => {
+    const response = await deleteCartAllItems(userId);
+    const data = await response.json();
+    return data;
   }
 );
 
@@ -61,6 +63,12 @@ export const cartSlice = createSlice({
         state.status = 'idle';
         state.items.push(action.payload);
       })
+      .addCase(createCartItemAsync.rejected, (state, action) => {
+        state.status = 'reject';
+        state.error = action.payload;
+      })
+
+
       .addCase(fetchCartItemsByUserIdAsync.pending, (state) => {
         state.status = 'loading';
       })
@@ -87,7 +95,11 @@ export const cartSlice = createSlice({
       .addCase(deleteCartAllItemsAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(deleteCartAllItemsAsync.fulfilled, (state, action) => {
+      .addCase(deleteCartAllItemsAsync.fulfilled, (state) => {
+        state.status = 'idle';
+        state.items = [];
+      })
+      .addCase(deleteCartAllItemsAsync.rejected, (state) => {
         state.status = 'idle';
         state.items = [];
       })
@@ -100,5 +112,6 @@ export const { increment } = cartSlice.actions;
 
 export const selectCartItems = (state) => state.cart.items;
 export const selectCartItemsLength = (state) => state.cart.items.length;
+export const selectCartError = (state) => state.cart.error;
 
 export default cartSlice.reducer;

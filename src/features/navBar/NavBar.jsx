@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, ShoppingCartIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, FaceSmileIcon, ShoppingCartIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Cart from '../cart/Cart'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -26,9 +26,10 @@ const navigation = [
     }
 ]
 const userNavigation = [
-    { name: 'Your Profile', href: '/my-profile' },
-    { name: 'My Orders', href: '/my-orders' },
-    { name: 'Sign out', href: '/logout' },
+    { name: 'Your Profile', href: '/my-profile', 'user': true },
+    { name: 'My Orders', href: '/my-orders', 'user': true },
+    { name: 'Sign Out', href: '/logout', 'user': true },
+    { name: 'Sign In', href: '/login', 'user': false },
 ]
 
 function classNames(...classes) {
@@ -124,7 +125,7 @@ export default function Navbar({ children }) {
                                                 >
                                                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                         {userNavigation.map((item) => (
-                                                            <Menu.Item key={item.name}>
+                                                            tempUser.role && item.user ? < Menu.Item key={item.name} >
                                                                 {({ active }) => (
                                                                     <Link
                                                                         to={item.href}
@@ -137,6 +138,19 @@ export default function Navbar({ children }) {
                                                                     </Link>
                                                                 )}
                                                             </Menu.Item>
+                                                                : user.role === '' && item.user === false && < Menu.Item key={item.name} >
+                                                                    {({ active }) => (
+                                                                        <Link
+                                                                            to={item.href}
+                                                                            className={classNames(
+                                                                                active ? 'bg-gray-100' : '',
+                                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                                            )}
+                                                                        >
+                                                                            {item.name}
+                                                                        </Link>
+                                                                    )}
+                                                                </Menu.Item>
                                                         ))}
                                                     </Menu.Items>
                                                 </Transition>
@@ -161,7 +175,7 @@ export default function Navbar({ children }) {
                             <Disclosure.Panel className="md:hidden">
                                 <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                     {navigation.map((item) => (
-                                        <Disclosure.Button
+                                        user.role == item.role && <Disclosure.Button
                                             key={item.name}
                                             as="a"
 
@@ -195,13 +209,11 @@ export default function Navbar({ children }) {
                                             <span className="sr-only">View notifications</span>
                                             <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
                                         </button>
-                                        <span className="inline-flex items-center rounded-md mb-7 -ml-3  bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                                            3
-                                        </span>
+                                        {itemCount > 0 && <span className="inline-flex items-center rounded-md mb-7 -ml-3  bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">{itemCount}</span>}
                                     </div>
                                     <div className="mt-3 space-y-1 px-2">
                                         {userNavigation.map((item) => (
-                                            <Disclosure.Button
+                                            tempUser.role && item.user ? <Disclosure.Button
                                                 key={item.name}
                                                 as="a"
 
@@ -211,7 +223,16 @@ export default function Navbar({ children }) {
                                                     {item.name}
                                                 </Link>
                                             </Disclosure.Button>
-                                        ))}
+                                                : user.role === '' && item.user === false && <Disclosure.Button
+                                                    key={item.name}
+                                                    as="a"
+
+                                                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                                                >
+                                                    <Link to={item.href} replace={true}>
+                                                        {item.name}
+                                                    </Link>
+                                                </Disclosure.Button>))}
                                     </div>
                                 </div>
                             </Disclosure.Panel>
@@ -230,7 +251,7 @@ export default function Navbar({ children }) {
                         {children}
                     </div>
                 </main>
-            </div>
+            </div >
         </>
     )
 }
