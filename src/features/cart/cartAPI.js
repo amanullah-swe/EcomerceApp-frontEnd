@@ -1,8 +1,9 @@
 // A mock function to mimic making an async request for data
+import { BASE_URL } from "../../app/constant";
 export function createCartItem(cartItem) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/cart`, {
+      const response = await fetch(`  ${BASE_URL}/cart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -24,7 +25,7 @@ export function createCartItem(cartItem) {
 export function fetchCartItemsByUserId() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/cart/user`, {
+      const response = await fetch(`  ${BASE_URL}/cart/user`, {
         credentials: "include",
       });
       if (!response.ok) {
@@ -41,7 +42,7 @@ export function fetchCartItemsByUserId() {
 export function updateCartItemById(update) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/cart/${update.id}`, {
+      const response = await fetch(`  ${BASE_URL}/cart/${update.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
@@ -61,7 +62,7 @@ export function updateCartItemById(update) {
 export function deleteCartItemById(itemId) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/cart/${itemId}`, {
+      const response = await fetch(`  ${BASE_URL}/cart/${itemId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",

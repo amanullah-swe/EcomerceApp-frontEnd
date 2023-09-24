@@ -1,8 +1,10 @@
 // A mock function to mimic making an async request for data
+
+import { BASE_URL } from "../../app/constant.js";
 export function fetchAllProducts() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/products`, {
+      const response = await fetch(`${BASE_URL}/products`, {
         credentials: "include",
       });
       if (!response.ok) {
@@ -22,7 +24,7 @@ export function fetchAllProducts() {
 export function fetchALLOrders() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/orders`, {
+      const response = await fetch(`${BASE_URL}/orders`, {
         credentials: "include",
       });
       if (!response.ok) {
@@ -42,7 +44,7 @@ export function fetchALLOrders() {
 export function fetchProductById(id) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/products/${id}`, {
+      const response = await fetch(`${BASE_URL}/products/${id}`, {
         credentials: "include",
       });
       if (!response.ok) {
@@ -76,7 +78,7 @@ export function fetchProductsByFilter({ filter, sort, pagination }) {
   return new Promise(async (resolve, reject) => {
 
     try {
-      const response = await fetch(`http://localhost:8080/products?${queryString}`, {
+      const response = await fetch(`${BASE_URL}/products?${queryString}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -89,7 +91,7 @@ export function fetchProductsByFilter({ filter, sort, pagination }) {
     } catch (error) {
       reject(error)
     }
-    const response = await fetch(`http://localhost:8080/products?${queryString}`, {
+    const response = await fetch(`${BASE_URL}/products?${queryString}`, {
       credentials: "include",
     });
     const data = await response.json();
@@ -101,7 +103,7 @@ export function fetchProductsByFilter({ filter, sort, pagination }) {
 
 export function fetchAllBrands() {
   return new Promise(async (resolve) => {
-    const response = await fetch(`http://localhost:8080/brands`, {
+    const response = await fetch(`${BASE_URL}/brands`, {
       credentials: "include",
     });
     const data = await response.json();
@@ -112,7 +114,7 @@ export function fetchAllBrands() {
 export function fetchAllCategories() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/categories`, {
+      const response = await fetch(`${BASE_URL}/categories`, {
         credentials: "include",
       });
       if (!response.ok) {

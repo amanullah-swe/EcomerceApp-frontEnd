@@ -1,7 +1,8 @@
 // A mock function to mimic making an async request for data
+import { BASE_URL } from "../../app/constant";
 export function createUser(userData) {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/auth/register`, {
+    const response = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -22,7 +23,7 @@ export function checkUser(loginInfo) {
   const { email, password } = loginInfo;
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/auth/login`, {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -47,7 +48,7 @@ export function checkUser(loginInfo) {
 export function updateUser(update) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/${update.id}`, {
+      const response = await fetch(`${BASE_URL}/users/${update.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(update)
@@ -69,7 +70,7 @@ export function updateUser(update) {
 export function logoutUser() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/auth/logout`, {
+      const response = await fetch(`${BASE_URL}/auth/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

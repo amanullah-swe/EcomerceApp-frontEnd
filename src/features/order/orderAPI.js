@@ -1,7 +1,8 @@
+import { BASE_URL } from "../../app/constant";
 export function createOrder(order) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/orders`, {
+      const response = await fetch(`  ${BASE_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -25,7 +26,7 @@ export function createOrder(order) {
 export function fetchALLOrders() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/`, {
+      const response = await fetch(`${BASE_URL}/`, {
         credentials: "include",
       });
       if (!response.ok) {
@@ -44,7 +45,7 @@ export function fetchALLOrders() {
 export function updateOrder(update) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/orders/${update.id}`, {
+      const response = await fetch(`${BASE_URL}/orders/${update.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -75,7 +76,7 @@ export function fetchOrdersByFilter({ sort, pagination }) {
     queryString += `${key}=${pagination[key]}&`
   }
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/orders?${queryString}`, {
+    const response = await fetch(`${BASE_URL}/orders?${queryString}`, {
       credentials: "include",
     });
     if (!response.ok) {
@@ -91,7 +92,7 @@ export function fetchOrdersByFilter({ sort, pagination }) {
 export function payment(order) {
   console.log(order);
   return new Promise(async (resolve, reject) => {
-    const response = await fetch('http://localhost:8080/payment/create-checkout-session', {
+    const response = await fetch(`${BASE_URL}/payment/create-checkout-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

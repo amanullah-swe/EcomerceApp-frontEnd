@@ -1,7 +1,8 @@
 // A mock function to mimic making an async request for data
+import { BASE_URL } from "../../app/constant";
 export function fetchLoddInUser() {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/users/`, {
+    const response = await fetch(`  ${BASE_URL}/users/`, {
       credentials: "include",
     });
     if (!response.ok) {
@@ -15,7 +16,7 @@ export function fetchLoddInUser() {
 }
 export function fetchUserOrders() {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/orders/user`, {
+    const response = await fetch(`  ${BASE_URL}/orders/user`, {
       credentials: "include",
     });
     if (!response.ok) {
@@ -30,7 +31,7 @@ export function fetchUserOrders() {
 
 export function updateUser(update) {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/users/${update.id}`, {
+    const response = await fetch(`  ${BASE_URL}/users/${update.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: "include",
