@@ -107,5 +107,5 @@ export const { increment, setIsLoggedInUserNull } = counterSlice.actions;
 
 export const selectisLoggedInUser = (state) => state.auth.isLoggedInUser;
 export const selectError = (state) => state.auth.error;
-
+export const selectAuthMessage = (state) => state.auth.message;
 export default counterSlice.reducer;
