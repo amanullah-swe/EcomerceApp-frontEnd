@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik';
 import { loginSchema } from '../../../schema/yupValidationSchema';
 import { checkUserAsync, selectError, selectisLoggedInUser } from '../authSlice';
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchCartItemsByUserIdAsync } from '../../cart/cartSlice';
@@ -12,10 +12,16 @@ import { fetchLoddInUserAsync } from '../../user/userSlice';
 
 function Login() {
     const dispatch = useDispatch();
+    const query = new URLSearchParams(useLocation().search);
+    // const params = useParams();
+    // const { email, password } = params;
+    const email = query.get("email");
+    const password = query.get("password")
+    console.log("checking for the params =====", query);
     const error = useSelector(selectError);
     const user = useSelector(selectisLoggedInUser);
     const { handleChange, handleSubmit, handleBlur, errors, values, touched } = useFormik({
-        initialValues: { email: '', password: '', },
+        initialValues: { email: email ? email : "", password: password ? password : "" },
         validationSchema: loginSchema,
         onSubmit: values => {
             dispatch(checkUserAsync(values));
@@ -61,7 +67,7 @@ function Login() {
                             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                                 Email address
                             </label>
-                            <div className="mt-2">
+                            <div className="mt-2 ">
                                 <input
                                     id="email"
                                     name="email"
@@ -69,7 +75,7 @@ function Login() {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     value={values.email}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="block pl-3 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                                 {errors.email && touched.email ? <p className='text-red-500'>{errors.email}</p> : null}
                             </div>
@@ -94,7 +100,7 @@ function Login() {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     value={values.password}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="block pl-3 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                                 {errors.password && touched.password ? <p className='text-red-500'>{errors.password}</p> : null}
                             </div>
