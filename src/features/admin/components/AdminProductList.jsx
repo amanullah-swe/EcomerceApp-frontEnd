@@ -19,6 +19,7 @@ import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom';
 import ProductSkeleton from '../../../components/ProductSkeleton.jsx';
+import { BASE_URL } from '../../../api/ApiConfig.js';
 const ITEM_PER_PAGE = 9;
 
 const sortOptions = [
@@ -467,7 +468,7 @@ function ProductGrid({ products, status }) {
                       <div className="group relative border-solid border-gray-300 border-2 p-2 mb-5">
                         <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                           <img
-                            src={product.thumbnail}
+                            src={BASE_URL + product.thumbnail}
                             alt={product.title}
                             className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                           />

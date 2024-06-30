@@ -101,6 +101,7 @@ export const productsSlice = createSlice({
       })
       .addCase(fetchProductByIdAsync.fulfilled, (state, action) => {
         state.status = 'idle';
+        // console.log("checking ========", action.payload);
         state.selectedProduct = action.payload;
       })
 
@@ -108,11 +109,11 @@ export const productsSlice = createSlice({
 });
 
 export const { increment, updateBrands } = productsSlice.actions;
-export const selectAllProducts = (state) => state.products.products;
-export const selectSelectedProduct = (state) => state.products.selectedProduct;
-export const selectAllBrands = (state) => state.products.brands;
-export const selectAllCategories = (state) => state.products.categories;
-export const selectTotalItems = (state) => state.products.totalItems;
-export const selectAdminStatus = (state) => { state.products.status };
+export const selectAllProducts = (state) => state.admin.products;
+export const selectSelectedProduct = (state) => state.admin?.selectedProduct;
+export const selectAllBrands = (state) => state.admin.brands;
+export const selectAllCategories = (state) => state.admin.categories;
+export const selectTotalItems = (state) => state.admin.totalItems;
+export const selectAdminStatus = (state) => { state.admin.status };
 
 export default productsSlice.reducer;

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchProductByIdAsync, selectSelectedProduct } from '../adminSlice'
 import { createCartItemAsync } from '../../cart/cartSlice'
 import { selectUserInfo } from '../../user/userSlice'
+import { BASE_URL } from '../../../api/ApiConfig'
 
 const colors = [
     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -44,6 +45,7 @@ export default function AdminProductDetial() {
     const dispatch = useDispatch();
     const { id } = useParams();
     const product = useSelector(selectSelectedProduct);
+    console.log("checking the selected product ===========", product);
     const user = useSelector(selectUserInfo);
 
     const handleAddToCart = (e) => {
@@ -96,7 +98,7 @@ export default function AdminProductDetial() {
                     <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
                         <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
                             <img
-                                src={product.images[0]}
+                                src={BASE_URL + product.images[0]}
                                 alt={product.title}
                                 className="h-full w-full object-cover object-center"
                             />
@@ -104,14 +106,14 @@ export default function AdminProductDetial() {
                         <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
                             <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
                                 <img
-                                    src={product.images[1]}
+                                    src={BASE_URL + product.images[1]}
                                     alt={product.title}
                                     className="h-full w-full object-cover object-center"
                                 />
                             </div>
                             <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
                                 <img
-                                    src={product.images[2]}
+                                    src={BASE_URL + product.images[2]}
                                     alt={product.title}
                                     className="h-full w-full object-cover object-center"
                                 />
@@ -119,7 +121,7 @@ export default function AdminProductDetial() {
                         </div>
                         <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
                             <img
-                                src={product.images[3]}
+                                src={BASE_URL + product.images[3]}
                                 alt={product.title}
                                 className="h-full w-full object-cover object-center"
                             />

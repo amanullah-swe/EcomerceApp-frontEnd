@@ -3,8 +3,13 @@ import { createProductAsync, selectAllBrands, selectAllCategories, selectSelecte
 import { useFormik } from 'formik'
 import { productSchema } from '../../../schema/yupValidationSchema';
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchProductByIdAsync } from '../adminSlice';
+import { imageBreakImage } from '../../../assets/images';
+import { array } from 'yup';
+import { handlePatchMultipartRequest } from '../../../api/ApiServicess';
+import { Apiconfig, BASE_URL } from '../../../api/ApiConfig';
+
 
 
 
@@ -17,7 +22,7 @@ export default function ProductForm() {
 
 
 
-    const { handleChange, handleReset, handleBlur, setValues, resetForm, handleSubmit, errors, touched, values } = useFormik({
+    const { handleChange, handleReset, handleBlur, setValues, resetForm, handleSubmit, setFieldValue, errors, touched, values } = useFormik({
         initialValues: {
             title: '',
             description: '',
@@ -43,9 +48,34 @@ export default function ProductForm() {
             delete product.image2;
             delete product.image3;
             delete product.image4;
+            delete product.images;
             if (id) {
-                dispatch(updateProductByIdAsync({ ...product, images, id }));
-                resetForm();
+                // dispatch(updateProductByIdAsync({ ...product, images, id }));
+                // resetForm();
+                const formData = new FormData();
+                for (const key in product) {
+                    if (product.hasOwnProperty(key)) {
+                        // If the field is a file, append it directly
+                        if (product[key] instanceof File) {
+                            formData.append(key, product[key]);
+                        } else if (Array.isArray(product[key])) {
+                            // If the field is an array, append each element with the same key
+                            product[key].forEach(item => formData.append(key, item));
+                        } else {
+                            // Otherwise, append the field as a string
+                            formData.append(key, product[key]);
+                        }
+                    }
+                }
+                images.forEach((item, index) => {
+                    formData.append("images", item);
+                });
+                // console.log({ ...product, images });
+                handlePatchMultipartRequest(Apiconfig.UPDATE_PRODUCT_PATCH_REQUEST + product.id, formData).then((res) => {
+                    console.log(res);
+                }).catch((err) => {
+                    console.log(err);
+                })
                 return
             } else {
                 dispatch(createProductAsync({ ...product, images }));
@@ -54,6 +84,8 @@ export default function ProductForm() {
             }
         },
     });
+
+    const [formImages, setFormImages] = useState({});
 
     useEffect(() => {
         if (id) dispatch(fetchProductByIdAsync(id));
@@ -71,6 +103,24 @@ export default function ProductForm() {
             setValues({ ...product, ...images });
         }
     }, [id, product]);
+
+
+    const handleImageChange = (event) => {
+        const { name } = event.target;
+        const file = event.target.files[0];
+        setFieldValue(name, file);
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setFormImages(prev => ({ ...prev, [name]: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setFormImages(prev => ({ ...prev, [name]: null }));
+        }
+        // console.log(formImages);
+        console.log("checking =================", values);
+    };
     return (
         <form className='bg-white p-6' onSubmit={handleSubmit}>
             <div className="space-y-12">
@@ -248,116 +298,93 @@ export default function ProductForm() {
 
                         </div>
 
-                        <div className="col-span-full">
-                            <label htmlFor="thumbnail" className="block text-sm font-medium leading-6 text-gray-900">
-                                Thumbnail
-                            </label>
-                            <div className="mt-2">
-                                <input
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.thumbnail}
-                                    type="text"
-                                    name="thumbnail"
-                                    id="thumbnail"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
+                        {/* thumbnail */}
+                        <div className="col-span-full ">
+                            <div className='flex justify-between'>
+                                <p className="text-sm font-medium leading-6 text-gray-900 ">
+                                    Thumbnail
+                                </p>
+                                <label
+                                    htmlFor="thumbnail"
+                                    className=' bg-purple-600 px-2 py-3 text-white rounded-md font-bold '
+                                >Upload Thumbnail</label>
                             </div>
+
+                            <input
+                                accept="image/*"
+                                multiple
+                                // required
+                                type="file"
+                                // name='thumbnail'
+                                id='thumbnail'
+                                name="thumbnail"
+                                className='sr-only'
+                                // value={values.thumbnail}
+                                onBlur={handleBlur}
+                                onChange={handleImageChange}
+                            />
+
+                            {typeof (values.thumbnail) === "string" ?
+                                <img
+                                    src={values.thumbnail ? BASE_URL + values.thumbnail : imageBreakImage}
+                                    alt='image'
+                                    className='h-[200px]'
+                                /> :
+                                <img
+                                    src={formImages?.thumbnail ? formImages?.thumbnail : imageBreakImage}
+                                    alt='image'
+                                    className='h-[200px]'
+                                />
+                            }
                             {errors.thumbnail && touched.thumbnail ? <p className='text-red-500'>{errors.thumbnail}</p> : null}
-
                         </div>
 
-                        <div className="col-span-full">
-                            <label htmlFor="image0" className="block text-sm font-medium leading-6 text-gray-900">
-                                image0
-                            </label>
-                            <div className="mt-2">
-                                <input
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.image0}
-                                    type="text"
-                                    name="image0"
-                                    id="image0"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            {errors.image0 && touched.image0 ? <p className='text-red-500'>{errors.image0}</p> : null}
+                        {
+                            Array.apply(null, Array(4)).map((_, index) => (
+                                <div className="col-span-full ">
+                                    <div className='flex justify-between'>
+                                        <p className="text-sm font-medium leading-6 text-gray-900 ">
+                                            image {index}
+                                        </p>
+                                        <label
+                                            htmlFor={"image" + index}
+                                            className=' bg-purple-600 px-2 py-3 text-white rounded-md font-bold '
+                                        >Upload {"Image " + index}</label>
+                                    </div>
 
-                        </div>
+                                    <input
+                                        accept="image/*"
+                                        multiple
+                                        // required
+                                        type="file"
+                                        id={"image" + index}
+                                        name={"image" + index}
+                                        className='sr-only'
+                                        onBlur={handleBlur}
+                                        onChange={handleImageChange}
+                                    />
 
-                        <div className="col-span-full">
-                            <label htmlFor="image1" className="block text-sm font-medium leading-6 text-gray-900">
-                                image1
-                            </label>
-                            <div className="mt-2">
-                                <input
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.image1}
-                                    type="text"
-                                    name="image1"
-                                    id="image1"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            {errors.image1 && touched.image1 ? <p className='text-red-500'>{errors.image1}</p> : null}
-
-                        </div>
-
-                        <div className="col-span-full">
-                            <label htmlFor="image2" className="block text-sm font-medium leading-6 text-gray-900">
-                                image2
-                            </label>
-                            <div className="mt-2">
-                                <input
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.image2}
-                                    type="text"
-                                    name="image2"
-                                    id="image2"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            {errors.image2 && touched.image2 ? <p className='text-red-500'>{errors.image2}</p> : null}
-                        </div>
-
-                        <div className="col-span-full">
-                            <label htmlFor="image3" className="block text-sm font-medium leading-6 text-gray-900">
-                                image3
-                            </label>
-                            <div className="mt-3">
-                                <input
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.image3}
-                                    type="text"
-                                    name="image3"
-                                    id="image3"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            {errors.image3 && touched.image3 ? <p className='text-red-500'>{errors.image3}</p> : null}
-                        </div>
-
-                        <div className="col-span-full">
-                            <label htmlFor="image4" className="block text-sm font-medium leading-6 text-gray-900">
-                                image4
-                            </label>
-                            <div className="mt-3">
-                                <input
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.image4}
-                                    type="text"
-                                    name="image4"
-                                    id="image4"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            {errors.image4 && touched.image4 ? <p className='text-red-500'>{errors.image4}</p> : null}
-                        </div>
+                                    {typeof (values["image" + index]) === "string" ?
+                                        <img
+                                            src={values["image" + index] ? BASE_URL + values["image" + index] : imageBreakImage}
+                                            alt='image'
+                                            className='h-[200px]'
+                                        /> :
+                                        <img
+                                            src={formImages["image" + index] ? formImages["image" + index] : imageBreakImage}
+                                            alt='image'
+                                            className='h-[200px]'
+                                        />
+                                    }
+                                    {/* <img
+                                        src={formImages["image" + index] ? formImages["image" + index] : imageBreakImage}
+                                        alt='image'
+                                        className='h-[200px]'
+                                    /> */}
+                                    {errors["image" + index] && touched["image" + index] ? <p className='text-red-500'>{errors["image" + index]}</p> : null}
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
             </div>

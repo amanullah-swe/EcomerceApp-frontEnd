@@ -78,6 +78,8 @@ export default function ProductDetial() {
     const { id } = useParams();
 
     const product = useSelector(selectSelectedProduct);
+
+    console.log("checking the selected product ===========", product);
     const user = useSelector(selectUserInfo);
     const items = useSelector(selectCartItems);
     const cartError = useSelector(selectCartError);
@@ -170,7 +172,7 @@ export default function ProductDetial() {
                             ))}
                             <li className="text-sm">
                                 <a href='#' aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
-                                    {product.title}
+                                    {product?.title}
                                 </a>
                             </li>
                         </ol>
@@ -180,8 +182,8 @@ export default function ProductDetial() {
                     <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
                         <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
                             <img
-                                src={product.images[0]}
-                                alt={product.title}
+                                src={product?.images[0]}
+                                alt={product?.title}
                                 className="h-full w-full object-cover object-center"
                             />
                         </div>
