@@ -1,4 +1,4 @@
-import { BASE_URL } from "../../app/constant";
+import { BASE_URL } from "../../api/ApiConfig";
 export function createOrder(order) {
   return new Promise(async (resolve, reject) => {
     try {

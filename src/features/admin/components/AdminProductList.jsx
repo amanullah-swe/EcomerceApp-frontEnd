@@ -1,26 +1,18 @@
 import { useState, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  selectAllProducts,
-  fetchProductsByFilterAsync,
-  selectTotalItems,
-  selectAllBrands,
-  selectAllCategories,
-  fetchAllBrandsAsync,
-  fetchAllCategotiesAsync,
-  updateBrands,
-  selectProductsStatus,
-
-} from '../../products/productListslice.js';
 
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
 import { StarIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+
 import { Link } from 'react-router-dom';
-import ProductSkeleton from '../../../components/ProductSkeleton.jsx';
-import { BASE_URL } from '../../../api/ApiConfig.js';
-const ITEM_PER_PAGE = 9;
+import { selectAllBrands, selectAllCategories } from '../../products/productListslice';
+import { Pegination } from '../../../components/Pagination';
+import { handleSimpleGetCall } from '../../../api/ApiServicess';
+import { Apiconfig, BASE_URL } from '../../../api/ApiConfig';
+import ProductSkeleton from '../../../components/ProductSkeleton';
+
+
 
 const sortOptions = [
   { name: 'Best Rating', order: 'desc', sort: 'rating', current: false },
@@ -32,69 +24,34 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function AdminProductList() {
+export default function ProductList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const dispatch = useDispatch();
-  const products = useSelector(selectAllProducts);
-  const totalItems = useSelector(selectTotalItems);
+  const [totalItems, setTotalItems] = useState(0)
   const brands = useSelector(selectAllBrands);
   const categories = useSelector(selectAllCategories);
+  const [loading, setLoading] = useState(false);
 
-  const status = useSelector(selectProductsStatus);
-  console.log(status);
 
-  const filters = [
-    {
-      id: 'brand',
-      name: 'Brand',
-      options: brands
-    },
-    {
-      id: 'category',
-      name: 'Category',
-      options: categories
-    },
-  ]
-
-  const [filter, setFilter] = useState({
-    category: [],
-    brand: []
-  });
+  const [filters, setFilters] = useState([]);
   const [sort, setSort] = useState({});
   const [page, setPage] = useState(1);
+  const [productList, setProductList] = useState([]);
 
-
-  const handleFilter = (e, index, option) => {
-    /*filter={
-      brand:[
-            {
-            label:name of brand without any hypen
-            value:name of brand with hypen means it is support query string
-            }....array of brands],
-      catogory:[{
-        same ass brands
-      }...array of catogries]
-
-      ,and newfilter add or remove value in filter and update brand state in redux where check is false or true to show user 
-    } */
-
-    e.stopPropagation();
+  const handleFilter = (e, index, optionIndex, option) => {
     const { name, value } = e.target;
-    let newFilter = {
-      ...filter
-    }
-    if (e.target.checked) {
-      if (newFilter[name]) newFilter[name].push(value);
-      else newFilter[name] = [value];
-      option = { ...option, checked: true };
-      dispatch(updateBrands({ name, value, option, index }));
-      setFilter(newFilter);
-    } else {
-      if (newFilter[e.target.name]) newFilter = { ...newFilter, [e.target.name]: newFilter[e.target.name].filter((value) => value !== e.target.value) }
-      option = { ...option, checked: false };
-      dispatch(updateBrands({ name, value, option, index }));
-      setFilter(newFilter);
-    }
+    setFilters(prevFilters => {
+      const newFilters = [...prevFilters];
+      const filter = { ...newFilters[index] };
+      const options = [...filter.options];
+      const option = { ...options[optionIndex], checked: e.target.checked };
+
+      options[optionIndex] = option;
+      filter.options = options;
+      newFilters[index] = filter;
+
+      return newFilters;
+    });
   }
 
 
@@ -110,23 +67,58 @@ export default function AdminProductList() {
     e.stopPropagation()
     setPage(page);
   }
-
   useEffect(() => {
-    const pagination = {
-      _page: page,
-      _limit: ITEM_PER_PAGE
+    let queryString = '';
+
+    filters.forEach(filter => {
+      filter.options.forEach(option => {
+        if (option.checked) {
+          queryString += `${filter.id}=${option.value}&`;
+        }
+      });
+    });
+    for (let key in sort) {
+      queryString += `${key}=${sort[key]}&`;
     }
-    dispatch(fetchProductsByFilterAsync({ filter, sort, pagination }))
-  }, [dispatch, sort, filter, page])
+    if (!loading) {
+      fetchAllProducts(queryString);
+    }
+
+  }, [filters, sort, page]);
+
+  const fetchAllProducts = (queryString = "") => {
+    setLoading(true);
+    handleSimpleGetCall(Apiconfig.GET_PRODUCTLIST + "?" + queryString + "&_limit=9" + "&_page=" + page)
+      .then((res) => {
+        if (res.success) {
+          setProductList(res.data);
+          setTotalItems(res.totalItems)
+        } else {
+          setProductList([]);
+          setTotalItems(0)
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      })
+  }
 
   useEffect(() => {
-    setPage(1);
-  }, [filter, sort]);
-  useEffect(() => {
-    dispatch(fetchAllBrandsAsync());
-    dispatch(fetchAllCategotiesAsync());
-  }, [dispatch]);
-
+    setFilters([
+      {
+        id: 'brand',
+        name: 'Brand',
+        options: brands
+      },
+      {
+        id: 'category',
+        name: 'Category',
+        options: categories
+      },
+    ])
+  }, [categories, brands])
   return (
     <div>
       <div>
@@ -207,7 +199,8 @@ export default function AdminProductList() {
                   <DesktopFilters handleFilter={handleFilter} filters={filters} />
 
                   {/* Product grid */}
-                  <ProductGrid products={products} status={status} />
+                  <ProductGrid products={productList} loading={loading} />
+
                 </div>
               </section>
 
@@ -222,75 +215,15 @@ export default function AdminProductList() {
   );
 }
 
-function Pegination({ page, setPage, handlePage, totalItems, }) {
 
-  const totalPages = Math.ceil(totalItems / ITEM_PER_PAGE);
-  return (
-    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-      <div className="flex flex-1 justify-between sm:hidden">
-        <div
-          onClick={() => { page > 1 ? setPage(page - 1) : null }}
-          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Previous
-        </div>
-        <div
-          onClick={() => { page < totalPages ? setPage(page + 1) : null }}
-          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Next
-        </div>
-      </div>
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{(page - 1) * ITEM_PER_PAGE + 1}</span> to <span className="font-medium">{page * ITEM_PER_PAGE}</span> of{' '}
-            <span className="font-medium">{totalItems}</span> results
-          </p>
-        </div>
-        <div>
-          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <div
-              onClick={() => { page > 1 ? setPage(page - 1) : null }}
-              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            >
-              <span className="sr-only">Previous</span>
-              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-            </div>
-            {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
-            {Array.from({ length: totalPages }).map((item, index) => {
-              return (
-                < p key={index}
-                  onClick={(e) => { handlePage(e, index + 1) }}
-                  aria-current="page"
-                  className={`relative cursor-pointer z-10 inline-flex items-center px-4 py-2 text-sm font-semibold ${page === index + 1 ? "bg-indigo-600  text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"}`}
-                >
-                  {index + 1}
-                </p>
-              )
-            })}
-            <div
-
-              onClick={() => { page < totalPages ? setPage(page + 1) : null }}
-              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            >
-              <span className="sr-only">Next</span>
-              <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-            </div>
-          </nav>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function DesktopFilters({ handleFilter, filters }) {
   return (
-    <form className="hidden lg:block">
+    <form className="hidden lg:block max-h-[600px] scroll-smooth overflow-y-auto scroll-width-2 direction-rlt">
       <h3 className="sr-only">Categories</h3>
 
-      {filters.map((section) => (
-        <Disclosure as="div" key={section.id} className="border-b border-gray-200 py-6">
+      {filters.map((section, index) => (
+        <Disclosure as="div" key={section.id} className="border-b border-gray-200 py-6 ml-4 direction-ltr">
           {({ open }) => (
             <>
               <h3 className="-my-3 flow-root">
@@ -315,7 +248,7 @@ function DesktopFilters({ handleFilter, filters }) {
                         defaultValue={option.value}
                         type="checkbox"
                         defaultChecked={option.checked}
-                        onChange={(e) => handleFilter(e, optionIdx, option)}
+                        onChange={(e) => handleFilter(e, index, optionIdx, option)}
                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                       />
                       <label
@@ -382,7 +315,7 @@ function MobileFilter({ handleFilter, setMobileFiltersOpen, mobileFiltersOpen, f
               <form className="mt-4 border-t border-gray-200">
                 <h3 className="sr-only">Categories</h3>
 
-                {filters.map((section) => (
+                {filters.map((section, index) => (
                   <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
                     {({ open }) => (
                       <>
@@ -408,7 +341,7 @@ function MobileFilter({ handleFilter, setMobileFiltersOpen, mobileFiltersOpen, f
                                   defaultValue={option.value}
                                   type="checkbox"
                                   defaultChecked={option.checked}
-                                  onChange={(e) => { handleFilter(e, optionIdx, option) }}
+                                  onChange={(e) => { handleFilter(e, index, optionIdx, option) }}
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <label
@@ -436,7 +369,12 @@ function MobileFilter({ handleFilter, setMobileFiltersOpen, mobileFiltersOpen, f
   );
 }
 
-function ProductGrid({ products, status }) {
+function ProductGrid({ products, loading }) {
+
+  const [imageError, setImageError] = useState(Array.from({ length: products.length }).map(() => true));
+  useEffect(() => {
+    setImageError(Array.from({ length: products.length }).map(() => true))
+  }, [products])
   return (
     <div className="lg:col-span-3">
       <div className="bg-white">
@@ -452,58 +390,72 @@ function ProductGrid({ products, status }) {
             </div>
           </Link>
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
-
-
-            {status === 'loading' ? (
+            {loading ? (
               Array.from({ length: 6 }).map((el, index) => {
                 return (
                   <ProductSkeleton key={index} />
                 )
               })
             ) :
-              (
-                products.map((product) => (
-                  <>
-                    <Link to={`/admin/product-details/${product.id}`} key={product.id}>
-                      <div className="group relative border-solid border-gray-300 border-2 p-2 mb-5">
-                        <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                          <img
-                            src={BASE_URL + product.thumbnail}
-                            alt={product.title}
-                            className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                          />
-                        </div>
-                        <div className="mt-4 flex justify-between">
-                          <div>
-                            <h3 className="text-sm text-gray-700">
-                              <p href={product.thumbnail}>
-                                <span aria-hidden="true" className="absolute inset-0" />
-                                {product.title}
-                              </p>
-                            </h3>
-                            <p className="mt-1 text-sm text-gray-500 flex align-center">
-                              <StarIcon className='w-5 inline mr-1'></StarIcon><span className=''>{product.rating}</span></p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{Math.floor(product.price - product.price * (product.discountPercentage) / 100)}</p>
-                            <p className="text-sm font-medium text-gray-400 line-through">{product.price}</p>
-                          </div>
+              (products && products.map((product, index) => (
+                <div>
+                  <Link to={`/product-details/${product.id}`} key={product.id}>
+                    <div className="group relative border-solid border-gray-300 border-2 p-2">
 
+                      <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 h-60">
+                        {
+                          imageError[index] ?
+                            <img
+                              src={BASE_URL + "/" + product.thumbnail}
+                              alt={product.title}
+                              className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                              onError={(e) => setImageError(prev => {
+                                const data = [...prev]
+                                data[index] = false;
+                                return data;
+                              })
+                              }
+                            />
+                            :
+                            <div role="status" class="space-y-8 md:space-y-0  md:flex h-full  md:items-center">
+                              <div class="flex items-center justify-center w-full h-full rounded sm:w-96 dark:bg-gray-700">
+                                <div class="flex items-center justify-center w-full h-full">
+                                  <svg class="w-10 h-10 text-gray-200 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                    <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                        }
+                      </div>
+                      <div className="mt-4 flex justify-between">
+                        <div>
+                          <h3 className="text-sm text-gray-700">
+                            <p href={product.thumbnail}>
+                              <span aria-hidden="true" className="absolute inset-0" />
+                              {product.title}
+                            </p>
+                          </h3>
+                          <p className="mt-1 text-sm text-gray-500 flex align-center">
+                            <StarIcon className='w-5 inline mr-1'></StarIcon><span className=''>{product.rating}</span></p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">₹ {Math.floor(product.price - product.price * (product.discountPercentage) / 100)}</p>
+                          <p className="text-sm font-medium text-gray-400 line-through">₹ {product.price}</p>
                         </div>
 
                       </div>
-                      <Link
-                        to={`/admin/product-form/${product.id}`}
-                        className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 mr-10  md:text-base font-medium text-white shadow-sm hover:bg-indigo-700 text-sm"
-                      >
-                        Edite
-                      </Link>
-                    </Link>
-                  </>
-                ))
-              )
-            }
+                    </div>
 
+                  </Link>
+                  <Link
+                    to={`/admin/product-form/${product.id}`}
+                    className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 mt-2    md:text-base font-medium text-white shadow-sm hover:bg-indigo-700 text-sm"
+                  >
+                    Edite
+                  </Link></div>
+              )))
+            }
           </div>
         </div>
         {/* end of product list*/}

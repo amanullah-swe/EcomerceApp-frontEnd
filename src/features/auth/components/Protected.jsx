@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { selectUserInfo } from '../../user/userSlice';
 // eslint-disable-next-line react/prop-types
 function Protected({ children }) {
-    const user = useSelector(selectUserInfo);
+    const user = localStorage.getItem("userRole");
     if (!user) {
         return <Navigate to={'/login'} replace={true}></Navigate>
     }

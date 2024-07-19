@@ -1,6 +1,7 @@
 // A mock function to mimic making an async request for data
 
-import { BASE_URL } from "../../app/constant.js";
+import { BASE_URL } from "../../api/ApiConfig";
+
 export function fetchAllProducts() {
   return new Promise(async (resolve, reject) => {
     try {

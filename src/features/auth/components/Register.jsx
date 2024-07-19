@@ -1,20 +1,42 @@
 import { useFormik } from 'formik';
 import { registerSchema } from '../../../schema/yupValidationSchema';
-import { createUserAsync, } from '../authSlice';
 import { useDispatch, } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee, faUser } from '@fortawesome/free-solid-svg-icons'
+import { useState } from 'react';
+import { Apiconfig } from '../../../api/ApiConfig';
+import { handlePostMultipartRequest } from '../../../api/ApiServicess';
+import { notifyError, notifySuccess } from '../../../utils/toastify';
 function Register() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [profileImage, setProfileImage] = useState(null);
     const { handleChange, handleSubmit, handleBlur, errors, values } = useFormik({
         initialValues: { name: '', email: '', password: '', },
         validationSchema: registerSchema,
         onSubmit: values => {
-            dispatch(createUserAsync({ ...values, addresses: [], role: 'user' }));
-            navigate('/login');
+            // dispatch(createUserAsync({ ...values, addresses: [], role: 'user' }));
+            const formData = new FormData();
+            formData.append("name", values.name)
+            formData.append("email", values.email)
+            formData.append("password", values.password)
+            formData.append("profileImage", profileImage);
+            handlePostMultipartRequest(Apiconfig.REGISTER_API, formData)
+                .then((res) => {
+                    if (res.success) {
+                        navigate('/login');
+                        notifySuccess(res.message);
+                    } else {
+                        notifyError(res.message);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
         },
     });
+
     return (
         <div>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -29,7 +51,39 @@ function Register() {
                     </h2>
                 </div>
 
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+
+                <div className='flex flex-col items-center justify-center mt-3 sm:mx-auto sm:w-full sm:max-w-sm'>
+                    {
+                        profileImage ? (
+                            <div className='w-24 h-24 rounded-full overflow-hidden'>
+                                <img
+                                    src={URL.createObjectURL(profileImage)}
+                                    className='w-full h-full object-cover'
+                                    alt='Profile'
+                                />
+                            </div>
+                        ) :
+                            (
+                                <div className=' w-[100px] h-[100px] rounded-full p-5 border-2'>
+                                    <FontAwesomeIcon className='w-full h-full' icon={faUser} />
+                                </div>
+                            )
+                    }
+                    <input
+                        type="file"
+                        accept='.png,.jpeg, .jpg'
+                        id='profilePic'
+                        hidden
+                        onChange={(e) => {
+                            // console.log(e.target.files[0])
+                            setProfileImage(e.target.files[0])
+                        }}
+                    />
+                    <label htmlFor='profilePic' className='px-3 py-1 mb-1  mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-sm cursor-pointer'> Upload image</label>
+
+                </div>
+
+                <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
@@ -103,7 +157,7 @@ function Register() {
                         </a>
                     </p>
                 </div>
-            </div></div>
+            </div></div >
     )
 }
 

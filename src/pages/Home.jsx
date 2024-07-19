@@ -6,7 +6,6 @@ function Home() {
     return (
         <>
             <Navbar>
-
                 <ProductList></ProductList>
             </Navbar>
             <Footer></Footer>

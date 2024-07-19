@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useFormik } from 'formik';
 import { loginSchema } from '../../../schema/yupValidationSchema';
-import { checkUserAsync, selectError, selectisLoggedInUser } from '../authSlice';
+import { selectError, selectisLoggedInUser } from '../authSlice';
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate, useLocation, useParams } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css';
+import { handleSimplePostCall } from '../../../api/ApiServicess';
+import { Apiconfig } from '../../../api/ApiConfig';
+import { notifyError, notifySuccess } from '../../../utils/toastify';
 import { fetchCartItemsByUserIdAsync } from '../../cart/cartSlice';
 import { fetchLoddInUserAsync } from '../../user/userSlice';
 
@@ -13,43 +15,39 @@ import { fetchLoddInUserAsync } from '../../user/userSlice';
 function Login() {
     const dispatch = useDispatch();
     const query = new URLSearchParams(useLocation().search);
-    // const params = useParams();
-    // const { email, password } = params;
     const email = query.get("email");
     const password = query.get("password")
-    console.log("checking for the params =====", query);
-    const error = useSelector(selectError);
-    const user = useSelector(selectisLoggedInUser);
+
+
+    const navigate = useNavigate();
     const { handleChange, handleSubmit, handleBlur, errors, values, touched } = useFormik({
         initialValues: { email: email ? email : "", password: password ? password : "" },
         validationSchema: loginSchema,
         onSubmit: values => {
-            dispatch(checkUserAsync(values));
-            error && loginError();
+            handleSimplePostCall(Apiconfig.LOGIN_API, JSON.stringify(values))
+                .then((res) => {
+                    if (res.success) {
+                        localStorage.setItem("Authorization", res.data.id);
+                        localStorage.setItem("userRole", res.data.role);
+                        notifySuccess(res.message);
+                        navigate("/");
+                        dispatch(fetchCartItemsByUserIdAsync());
+                        dispatch(fetchLoddInUserAsync());
+                    } else {
+                        notifyError(res.message);
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
         },
     });
 
-    useEffect(() => {
-        return () => {
-            dispatch(fetchCartItemsByUserIdAsync());
-            dispatch(fetchLoddInUserAsync());
-        }
-    }, [])
-    const loginError = () => toast.error(error.message, {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        theme: "light",
-    });
+
+
     return (
         <div>
-            {user ? <Navigate to='/'></Navigate> : null}
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-                <ToastContainer limit={1} />
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
                         className="mx-auto h-10 w-auto"

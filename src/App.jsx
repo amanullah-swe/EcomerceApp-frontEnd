@@ -11,7 +11,6 @@ import "./index.css";
 import Register from './features/auth/components/Register';
 import CheckoutPage from './pages/CheckoutPage';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectisLoggedInUser } from './features/auth/authSlice';
 import { useEffect } from 'react';
 import { fetchCartItemsByUserIdAsync } from './features/cart/cartSlice';
 import ErrorPage from './pages/404';
@@ -19,13 +18,15 @@ import OrderSuccesPage from './pages/OrderSuccesPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import MyProfilePage from './pages/MyProfilePage';
 import { fetchLoddInUserAsync } from './features/user/userSlice';
-import Logout from './features/auth/components/Logout';
+
 import Protected from './features/auth/components/Protected';
 import ProtectedAdmin from './features/auth/components/ProtectedAdmin.jsx'
 import AdminProductListPage from './pages/AdminProductListPage';
 import AdminProductDetailPage from './pages/AdminProductDetialPage';
 import ProductFormPage from './pages/ProductFormPage';
 import AdminOrders from './features/admin/components/AdminOrders';
+import { fetchAllBrandsAsync, fetchAllCategotiesAsync } from './features/products/productListslice.js';
+import { ToastContainer } from 'react-toastify';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/product-details/:id",
-    element: <Protected><ProductDetailPage /></Protected>,
+    element: <ProductDetailPage />,
   },
   {
     path: "/order-succes",
@@ -59,10 +60,7 @@ const router = createBrowserRouter([
     path: "/my-profile",
     element: <MyProfilePage />,
   },
-  {
-    path: "/logout",
-    element: <Logout />,
-  },
+
   {
     path: "/admin",
     element: <ProtectedAdmin><AdminProductListPage /> </ProtectedAdmin>,
@@ -99,11 +97,14 @@ function App() {
   useEffect(() => {
     dispatch(fetchCartItemsByUserIdAsync());
     dispatch(fetchLoddInUserAsync());
+    dispatch(fetchAllBrandsAsync());
+    dispatch(fetchAllCategotiesAsync());
   }, [dispatch]);
 
 
   return (
     <>
+      <ToastContainer />
       <RouterProvider router={router} />
     </>
   )

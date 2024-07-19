@@ -8,8 +8,8 @@ import { addressFormSchema } from '../schema/yupValidationSchema';
 import { useEffect, useState } from 'react';
 import { createOrderAsync, paymentAsync, selectCurrentOrder } from '../features/order/orderSlice';
 import { fetchLoddInUserAsync, selectUserInfo, updateUserAsync } from '../features/user/userSlice';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { notifyError } from '../utils/toastify';
+
 
 
 
@@ -96,31 +96,19 @@ export default function CheckoutPage() {
             else dispatch(paymentAsync(order));
         }
         else {
-            warning();
-            console.log('');
+            notifyError("Pleas select and address")
         }
 
         // TODO
         // change the stock in the backend
     }
-    const warning = () => toast.warn('select Address and payment method', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        theme: "light",
-    });
     return (
         <>   {!items.length ? <Navigate to='/' replace={true}></Navigate> : null}
             {currentOrder ? <Navigate to='/order-succes' replace={true}></Navigate> : null}
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-                <ToastContainer limit={1} />
                 <div className="grid md:grid-cols-5 grid-flow-row gap-3">
                     {/* Personal Information Section */}
-                    <div className="w-full col-span-3 bg-white p-4 sm:width-100 shadow-xl">
+                    <div className="w-full col-span-3 bg-white p-4 sm:width-100 shadow-xl rounded-xl overflow-hidden">
                         <form onSubmit={handleSubmit}>
                             {/* Personal Information Fields */}
                             <div className="space-y-12">
@@ -391,7 +379,7 @@ export default function CheckoutPage() {
                                                 Card
                                             </label>
                                         </div>
-                                        <div className="flex items-center gap-x-3">
+                                        {/* <div className="flex items-center gap-x-3">
                                             <input
                                                 id="upi"
                                                 name="PaymentMethods"
@@ -403,7 +391,7 @@ export default function CheckoutPage() {
                                             <label htmlFor="upi" className="block text-sm font-medium leading-6 text-gray-900">
                                                 UPI
                                             </label>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </fieldset>
                             </div>
@@ -411,11 +399,11 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Shopping Cart Section */}
-                    <div className="w-full col-span-2 px-3">
-                        <div className="flex  flex-col overflow-y-hidden bg-white shadow-xl">
+                    <div className="w-full col-span-2  rounded-xl overflow-hidden">
+                        <div className="flex  flex-col overflow-y-hidden bg-white shadow-xl px-4">
                             <div className="flex-1 overflow-y-auto px-0 py-6 sm:px-2">
                                 <div className="flex items-start justify-between">
-                                    <h1 className="text-lg font-medium text-gray-900">Summary</h1>
+                                    <h1 className="text-3xl font-medium text-gray-900">Summary</h1>
                                 </div>
 
                                 <div className="mt-8">
@@ -423,7 +411,7 @@ export default function CheckoutPage() {
                                         <ul role="list" className="-my-6 divide-y divide-gray-200">
                                             {items.map((item) => (
                                                 <li key={item.product.id} className="flex py-6">
-                                                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                    <div className="h-32 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                         <img
                                                             src={item.product.thumbnail}
                                                             alt={item.product.title}
@@ -437,7 +425,7 @@ export default function CheckoutPage() {
                                                                 <h3>
                                                                     <a href={item.product.href}>{item.product.title}</a>
                                                                 </h3>
-                                                                <p className="ml-4">$ {item.product.price}</p>
+                                                                <p className="ml-4">₹ {item.product.price}</p>
                                                             </div>
                                                             <p className="mt-1 text-sm text-gray-500"><StarIcon className='w-4 inline mr-1' />{item.product.rating}</p>
                                                         </div>
@@ -471,7 +459,7 @@ export default function CheckoutPage() {
                             <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                                 <div className="flex justify-between text-base font-medium text-gray-900 my-2">
                                     <p>Subtotal</p>
-                                    <p>${totalAmount}</p>
+                                    <p>₹ {totalAmount}</p>
                                 </div>
                                 <div className="flex justify-between text-base font-medium text-gray-900 my-2">
                                     <p>Total items </p>

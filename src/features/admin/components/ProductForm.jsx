@@ -2,13 +2,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { createProductAsync, selectAllBrands, selectAllCategories, selectSelectedProduct, updateProductByIdAsync } from '../../products/productListslice'
 import { useFormik } from 'formik'
 import { productSchema } from '../../../schema/yupValidationSchema';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchProductByIdAsync } from '../adminSlice';
 import { imageBreakImage } from '../../../assets/images';
 import { array } from 'yup';
-import { handlePatchMultipartRequest } from '../../../api/ApiServicess';
+import { handlePatchMultipartRequest, handlePostMultipartRequest, handleSimpleGetCall } from '../../../api/ApiServicess';
 import { Apiconfig, BASE_URL } from '../../../api/ApiConfig';
+import { notifyError, notifySuccess } from '../../../utils/toastify';
 
 
 
@@ -18,7 +19,8 @@ export default function ProductForm() {
     const categories = useSelector(selectAllCategories);
     const dispatch = useDispatch();
     const { id } = useParams();
-    const product = useSelector(selectSelectedProduct);
+    const [product, setProduct] = useState(null);
+    const navigate = useNavigate();
 
 
 
@@ -32,12 +34,12 @@ export default function ProductForm() {
             stock: '',
             brand: '',
             category: '',
-            thumbnail: '',
-            image0: '',
-            image1: '',
-            image2: '',
-            image3: '',
-            image4: '',
+            // thumbnail: '',
+            // image0: '',
+            // image1: '',
+            // image2: '',
+            // image3: '',
+            // image4: '',
         },
         validationSchema: productSchema,
         onSubmit: values => {
@@ -49,37 +51,49 @@ export default function ProductForm() {
             delete product.image3;
             delete product.image4;
             delete product.images;
-            if (id) {
-                // dispatch(updateProductByIdAsync({ ...product, images, id }));
-                // resetForm();
-                const formData = new FormData();
-                for (const key in product) {
-                    if (product.hasOwnProperty(key)) {
-                        // If the field is a file, append it directly
-                        if (product[key] instanceof File) {
-                            formData.append(key, product[key]);
-                        } else if (Array.isArray(product[key])) {
-                            // If the field is an array, append each element with the same key
-                            product[key].forEach(item => formData.append(key, item));
-                        } else {
-                            // Otherwise, append the field as a string
-                            formData.append(key, product[key]);
-                        }
+            const formData = new FormData();
+            for (const key in product) {
+                if (product.hasOwnProperty(key)) {
+                    // If the field is a file, append it directly
+                    if (product[key] instanceof File) {
+                        formData.append(key, product[key]);
+                    } else if (Array.isArray(product[key])) {
+                        // If the field is an array, append each element with the same key
+                        product[key].forEach(item => formData.append(key, item));
+                    } else {
+                        // Otherwise, append the field as a string
+                        formData.append(key, product[key]);
                     }
                 }
-                images.forEach((item, index) => {
-                    formData.append("images", item);
-                });
-                // console.log({ ...product, images });
-                handlePatchMultipartRequest(Apiconfig.UPDATE_PRODUCT_PATCH_REQUEST + product.id, formData).then((res) => {
-                    console.log(res);
-                }).catch((err) => {
-                    console.log(err);
-                })
-                return
+            }
+            images.forEach((item, index) => {
+                formData.append("images", item);
+            });
+            if (id) {
+                handlePatchMultipartRequest(Apiconfig.UPDATE_PRODUCT_PATCH_REQUEST + product.id, formData)
+                    .then((res) => {
+                        if (res.success) {
+                            navigate('/admin')
+                            notifySuccess(res.message);
+                        } else {
+                            notifyError(res.message);
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                return;
             } else {
-                dispatch(createProductAsync({ ...product, images }));
-                resetForm();
+                handlePostMultipartRequest(Apiconfig.CREATE_PRODUCT, formData)
+                    .then((res) => {
+                        if (res.success) {
+                            navigate('/admin')
+                            notifySuccess(res.message);
+                        } else {
+                            notifyError(res.message);
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
                 return;
             }
         },
@@ -88,21 +102,29 @@ export default function ProductForm() {
     const [formImages, setFormImages] = useState({});
 
     useEffect(() => {
-        if (id) dispatch(fetchProductByIdAsync(id));
-    }, [dispatch, id])
-
-    useEffect(() => {
+        // if (id) dispatch(fetchProductByIdAsync(id));
         if (id) {
-            const images = {
-                image0: product?.images[0],
-                image1: product?.images[1],
-                image2: product?.images[2],
-                image3: product?.images[3],
-                image4: product?.images[4],
-            }
-            setValues({ ...product, ...images });
+            handleSimpleGetCall(Apiconfig.GET_PRODUCT_BY_ID + id)
+                .then(res => {
+                    if (res.success) {
+                        const product = res.data;
+                        setProduct(product);
+                        const images = {
+                            image0: product?.images[0],
+                            image1: product?.images[1],
+                            image2: product?.images[2],
+                            image3: product?.images[3],
+                            image4: product?.images[4],
+                        }
+                        setValues({ ...product, ...images });
+                    }
+                    else {
+                        notifyError(res.message)
+                    }
+                })
         }
-    }, [id, product]);
+
+    }, [id])
 
 
     const handleImageChange = (event) => {
@@ -326,7 +348,7 @@ export default function ProductForm() {
 
                             {typeof (values.thumbnail) === "string" ?
                                 <img
-                                    src={values.thumbnail ? BASE_URL + values.thumbnail : imageBreakImage}
+                                    src={values.thumbnail ? BASE_URL + "/" + values.thumbnail : imageBreakImage}
                                     alt='image'
                                     className='h-[200px]'
                                 /> :
@@ -339,51 +361,46 @@ export default function ProductForm() {
                             {errors.thumbnail && touched.thumbnail ? <p className='text-red-500'>{errors.thumbnail}</p> : null}
                         </div>
 
-                        {
-                            Array.apply(null, Array(4)).map((_, index) => (
-                                <div className="col-span-full ">
-                                    <div className='flex justify-between'>
-                                        <p className="text-sm font-medium leading-6 text-gray-900 ">
-                                            image {index}
-                                        </p>
-                                        <label
-                                            htmlFor={"image" + index}
-                                            className=' bg-purple-600 px-2 py-3 text-white rounded-md font-bold '
-                                        >Upload {"Image " + index}</label>
-                                    </div>
 
-                                    <input
-                                        accept="image/*"
-                                        multiple
-                                        // required
-                                        type="file"
-                                        id={"image" + index}
-                                        name={"image" + index}
-                                        className='sr-only'
-                                        onBlur={handleBlur}
-                                        onChange={handleImageChange}
-                                    />
+                        {Array.apply(null, Array(4)).map((_, index) => (
+                            <div className="col-span-full ">
+                                <div className='flex justify-between'>
+                                    <p className="text-sm font-medium leading-6 text-gray-900 ">
+                                        image {index}
+                                    </p>
+                                    <label
+                                        htmlFor={"image" + index}
+                                        className=' bg-purple-600 px-2 py-3 text-white rounded-md font-bold '
+                                    >Upload {"Image " + index}</label>
+                                </div>
 
-                                    {typeof (values["image" + index]) === "string" ?
-                                        <img
-                                            src={values["image" + index] ? BASE_URL + values["image" + index] : imageBreakImage}
-                                            alt='image'
-                                            className='h-[200px]'
-                                        /> :
-                                        <img
-                                            src={formImages["image" + index] ? formImages["image" + index] : imageBreakImage}
-                                            alt='image'
-                                            className='h-[200px]'
-                                        />
-                                    }
-                                    {/* <img
+                                <input
+                                    accept="image/*"
+                                    multiple
+                                    // required
+                                    type="file"
+                                    id={"image" + index}
+                                    name={"image" + index}
+                                    className='sr-only'
+                                    onBlur={handleBlur}
+                                    onChange={handleImageChange}
+                                />
+
+                                {typeof (values["image" + index]) === "string" ?
+                                    <img
+                                        src={values["image" + index] ? BASE_URL + "/" + values["image" + index] : imageBreakImage}
+                                        alt='image'
+                                        className='h-[200px]'
+                                    /> :
+                                    <img
                                         src={formImages["image" + index] ? formImages["image" + index] : imageBreakImage}
                                         alt='image'
                                         className='h-[200px]'
-                                    /> */}
-                                    {errors["image" + index] && touched["image" + index] ? <p className='text-red-500'>{errors["image" + index]}</p> : null}
-                                </div>
-                            ))
+                                    />
+                                }
+                                {errors["image" + index] && touched["image" + index] ? <p className='text-red-500'>{errors["image" + index]}</p> : null}
+                            </div>
+                        ))
                         }
                     </div>
                 </div>
@@ -400,6 +417,6 @@ export default function ProductForm() {
                     Save
                 </button>
             </div>
-        </form>
+        </form >
     )
 }

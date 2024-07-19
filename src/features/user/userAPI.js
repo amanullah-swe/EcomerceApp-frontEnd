@@ -1,5 +1,7 @@
+import { BASE_URL } from "../../api/ApiConfig";
+
 // A mock function to mimic making an async request for data
-import { BASE_URL } from "../../app/constant";
+
 export function fetchLoddInUser() {
   return new Promise(async (resolve, reject) => {
     const response = await fetch(`  ${BASE_URL}/users/`, {

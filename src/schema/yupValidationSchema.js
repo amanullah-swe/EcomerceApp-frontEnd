@@ -24,17 +24,11 @@ const addressFormSchema = object({
 const productSchema = object({
     title: string().required(),
     description: string().required(),
-    price: string().required(),
-    discountPercentage: string().required(),
-    rating: string().required(),
-    stock: string().required(),
+    price: number("price should be a numnber").required(),
+    discountPercentage: number("discountPercentage should be a numnber").required(),
+    rating: number("rating should be a numnber").required(),
+    stock: number("stock should be a numnber").required(),
     brand: string().required(),
     category: string().required(),
-    thumbnail: string().required(),
-    image0: string().required(),
-    image1: string().required(),
-    image2: string().required(),
-    image3: string().required(),
-    image4: string().required(),
 })
 export { registerSchema, loginSchema, addressFormSchema, productSchema }

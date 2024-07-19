@@ -3,8 +3,6 @@ import { fetchLoddInUserAsync, selectUserError, selectUserInfo, updateUserAsync 
 import { addressFormSchema } from "../../../schema/yupValidationSchema";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
-
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from "react-router-dom";
 
@@ -14,9 +12,6 @@ function UserProfile() {
     const userError = useSelector(selectUserError);
 
     const [showForm, setShowForm] = useState(-2);
-    useEffect(() => {
-        dispatch(fetchLoddInUserAsync());
-    }, [dispatch]);
 
     const { handleChange, handleReset, handleBlur, resetForm, setValues, handleSubmit, errors, touched, values } = useFormik({
         initialValues: {
@@ -66,33 +61,11 @@ function UserProfile() {
         removeAddressSucces();
     }
 
-    const removeAddressSucces = () => toast.success('Removed Succesfully', {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        theme: "light",
-    });
-
-    const AddedAddressSucces = () => toast.success('Added Succesfully', {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        theme: "light",
-    });
     return (
         <>
             {/* Shopping Cart Section */}
-            {userError ? <Navigate to='/login' replace={true}></Navigate> : null}
+            {/* {userError ? <Navigate to='/login' replace={true}></Navigate> : null} */}
             <div className="w-full col-span-2 px-3">
-                <ToastContainer />
                 <div className="flex  flex-col overflow-y-hidden bg-white shadow-xl px-4">
                     <div className="flex-1 overflow-y-auto px-0 py-6 sm:px-2">
                         <div className="flex items-start justify-between">
@@ -317,49 +290,54 @@ function UserProfile() {
                         </button>
                         }
                         {/* Address Selection Section */}
-                        <div className="border-b border-gray-900/10 pb-0" >
-                            <h1 className="text-2xl font-semibold leading-7 text-gray-900">Addresses</h1>
-                            <div className="mt-5 space-y-10">
-                                <ul className="divide-y divide-gray-100 my-2">
-                                    {user.addresses && user.addresses.map((address, index) => (
-                                        <li key={index} className={`flex justify-between py-5 border-gray-300 border-1 px-2 mb-2`}>
-                                            <div className="flex gap-x-4">
-                                                <div className="min-w-0 flex-auto">
-                                                    <p className="text-sm font-semibold leading-6 text-gray-900">{address.firstName + '  ' + address.lastName}</p>
-                                                    <p className="truncate text-xs leading-5 text-gray-500">{address.streetAddress}</p>
-                                                    <p className="truncate text-xs leading-5 text-gray-500">{address.pinCode}</p>
-                                                </div>
-                                            </div>
-                                            <div className=" shrink-0 sm:flex sm:flex-row gap-4 ">
-                                                <div>
-                                                    <p className="text-sm leading-6 text-gray-900">Phone: {address.phone}</p>
-                                                    <div className="mt-1 flex items-center gap-x-1.5">
-                                                        <p className="text-xs leading-5 text-gray-500">{address.city}, {address.country}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <button
-                                                        onClick={(e) => handleRemoveAddress(e, index)}
-                                                        type="button"
-                                                        className="font-medium text-indigo-600 hover:text-indigo-500 mb-3"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => handleEditeAddress(e, index)}
-                                                        type="button"
-                                                        className="font-medium text-indigo-600 hover:text-indigo-500"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                </div>
-                                            </div>
 
-                                        </li>
-                                    ))}
-                                </ul>
+                        {
+                            user?.addresses &&
+                            <div className="border-b border-gray-900/10 pb-0" >
+                                <h1 className="text-2xl font-semibold leading-7 text-gray-900">Addresses</h1>
+                                <div className="mt-5 space-y-10">
+                                    <ul className="divide-y divide-gray-100 my-2">
+                                        {
+                                            user.addresses.map((address, index) => (
+                                                <li key={index} className={`flex justify-between py-5 border-gray-300 border-1 px-2 mb-2`}>
+                                                    <div className="flex gap-x-4">
+                                                        <div className="min-w-0 flex-auto">
+                                                            <p className="text-sm font-semibold leading-6 text-gray-900">{address.firstName + '  ' + address.lastName}</p>
+                                                            <p className="truncate text-xs leading-5 text-gray-500">{address.streetAddress}</p>
+                                                            <p className="truncate text-xs leading-5 text-gray-500">{address.pinCode}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className=" shrink-0 sm:flex sm:flex-row gap-4 ">
+                                                        <div>
+                                                            <p className="text-sm leading-6 text-gray-900">Phone: {address.phone}</p>
+                                                            <div className="mt-1 flex items-center gap-x-1.5">
+                                                                <p className="text-xs leading-5 text-gray-500">{address.city}, {address.country}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <button
+                                                                onClick={(e) => handleRemoveAddress(e, index)}
+                                                                type="button"
+                                                                className="font-medium text-indigo-600 hover:text-indigo-500 mb-3"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => handleEditeAddress(e, index)}
+                                                                type="button"
+                                                                className="font-medium text-indigo-600 hover:text-indigo-500"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </li>
+                                            ))}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>
